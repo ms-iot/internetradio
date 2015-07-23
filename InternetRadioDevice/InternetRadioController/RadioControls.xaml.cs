@@ -17,6 +17,7 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using System.Diagnostics;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -52,9 +53,13 @@ namespace InternetRadioController
             App.ConnectionHandler.SendMessage("Vdn");
         }
 
-        private void Button_Click_5(object sender, RoutedEventArgs e)
+        private async void Button_Click_5(object sender, RoutedEventArgs e)
         {
-            App.ConnectionHandler.SendMessage("Add" + PresetName.Text + ";" + PresetAddress.Text);
+            await App.ConnectionHandler.SendMessage("Add" + PresetName.Text + ";" + PresetAddress.Text);
+            PresetName.Text = "";
+            PresetAddress.Text = "";
+            var dialog = new MessageDialog("Preset Added");
+            await dialog.ShowAsync();
         }
 
         private void Button_Click_6(object sender, RoutedEventArgs e)

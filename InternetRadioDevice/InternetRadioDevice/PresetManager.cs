@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,16 +14,13 @@ namespace InternetRadioDevice
 
         public PresetManager()
         {
-            loadPresets();
-
             radioPresets = new List<Channel>();
-            radioPresets.Add(new Channel("KEXP", new Uri("http://192.168.1.100:8080/kexp.mp3")));
-            radioPresets.Add(new Channel("NPR Car Talk", new Uri("http://192.168.1.100:8081/car.mp3")));
+            loadPresets();
         }
 
         public Channel CurrentChannel()
         {
-            return radioPresets[currentPreset];
+            return getPreset(currentPreset);
         }
 
         public Channel NextChannel()
@@ -37,7 +35,7 @@ namespace InternetRadioDevice
             }
 
             savePresets();
-            return radioPresets[currentPreset];
+            return getPreset(currentPreset);
         }
 
         public Channel PreviousChannel()
@@ -52,18 +50,36 @@ namespace InternetRadioDevice
             }
 
             savePresets();
-            return radioPresets[currentPreset];
+            return getPreset(currentPreset);
         }
 
         public void AddChannel(Channel channel)
         {
             radioPresets.Add(channel);
+            savePresets();
+        }
+
+        private Channel getPreset(int presetNumber)
+        {
+            if (radioPresets.Count == 0)
+                return new Channel("", new Uri("http://localhost"));
+
+            return radioPresets[presetNumber];
         }
 
         private void savePresets()
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["currentPreset"] = currentPreset;
+
+            string seralizedPresets = "";
+
+            foreach (var preset in radioPresets)
+            {
+                seralizedPresets += preset.Name + ";" + preset.Address + "|";
+            }
+
+            localSettings.Values["presets"] = seralizedPresets;
         }
 
         private void loadPresets()
@@ -77,6 +93,23 @@ namespace InternetRadioDevice
             else
             {
                 currentPreset = 0;
+            }
+
+            if (localSettings.Values.ContainsKey("presets"))
+            {
+                foreach (var preset in (localSettings.Values["presets"] as string).Split('|'))
+                {
+                    var presetPart = preset.Split(';');
+
+                    if (presetPart.Length == 2)
+                    {
+                        radioPresets.Add(new Channel(presetPart[0], new Uri(presetPart[1])));
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Invlaid Preset loaded from settings");
+                    }
+                }
             }
         }
     }

@@ -56,14 +56,14 @@ namespace InternetRadioDevice
                         button.DebounceTimeout = new TimeSpan(Config.Buttons.ButtonDebounce);
                         button.SetDriveMode(GpioPinDriveMode.Input);
                         button.ValueChanged += HandleButton;
-                        Debug.Write("Button on pin "+ pinSetting.Value +" successfully bound for action: " + pinSetting.Key.ToString());
+                        Debug.WriteLine("Button on pin "+ pinSetting.Value +" successfully bound for action: " + pinSetting.Key.ToString());
                         actionButtons.Add(pinSetting.Value, button);
                         button = null;
                         continue;
                     }
                 }
 
-                Debug.Write("Error: Button on pin " + pinSetting.Value + " was unable to be bound becuase: " + status.ToString());
+                Debug.WriteLine("Error: Button on pin " + pinSetting.Value + " was unable to be bound becuase: " + status.ToString());
             }
 
             listener.ConnectionReceived += connectionReceived;

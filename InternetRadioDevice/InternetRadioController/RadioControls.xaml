@@ -39,7 +39,7 @@
                 <TextBlock>New Preset:</TextBlock>
                 <TextBox Width="150" Text="Name" Name="PresetName"/>
                 <TextBox Width="150" Text="Address" Name="PresetAddress"/>
-                <Button Click="Button_Click_5" Name="addButton" IsEnabled="False">Add</Button>
+                <Button Click="Button_Click_5" Name="addButton">Add</Button>
             </StackPanel>
         </StackPanel>
     </Grid>
