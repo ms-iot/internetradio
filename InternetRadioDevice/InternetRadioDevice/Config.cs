@@ -8,6 +8,10 @@ namespace InternetRadioDevice
 {
     namespace Config
     {
+        public static class Api
+        {
+            public static int Port = 3011;
+        }
         public static class Messages
         {
 

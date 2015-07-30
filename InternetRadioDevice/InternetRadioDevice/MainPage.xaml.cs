@@ -15,7 +15,6 @@ using Windows.UI.Xaml.Navigation;
 
 using Windows.Networking.Sockets;
 using System.Diagnostics;
-using Win10_LCD;
 using Windows.Devices.Gpio;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
@@ -93,10 +92,12 @@ namespace InternetRadioDevice
         {
             if (isAsleep)
             {
+                //App.TelemetryManager.TrackEvent("App_Wake");
                 await startup();
             }
             else
             {
+                //App.TelemetryManager.TrackEvent("App_Sleep");
                 await shutdown();
             }
 

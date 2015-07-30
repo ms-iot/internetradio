@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioDevice", "InternetRadioDevice\InternetRadioDevice.csproj", "{61236543-3077-4BFD-A9B7-1C286A91C1FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioController", "InternetRadioController\InternetRadioController.csproj", "{DC413CD7-305F-4142-A476-97C162851635}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioController", "InternetRadioController\InternetRadioController.csproj", "{895696B1-A4B8-4864-89E1-C9067AA8A542}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,26 +39,26 @@ Global
 		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.ActiveCfg = Release|x86
 		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.Build.0 = Release|x86
 		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.Deploy.0 = Release|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|ARM.ActiveCfg = Debug|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|ARM.Build.0 = Debug|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|ARM.Deploy.0 = Debug|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x64.ActiveCfg = Debug|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x64.Build.0 = Debug|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x64.Deploy.0 = Debug|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x86.ActiveCfg = Debug|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x86.Build.0 = Debug|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Debug|x86.Deploy.0 = Debug|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|Any CPU.ActiveCfg = Release|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|ARM.ActiveCfg = Release|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|ARM.Build.0 = Release|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|ARM.Deploy.0 = Release|ARM
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x64.ActiveCfg = Release|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x64.Build.0 = Release|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x64.Deploy.0 = Release|x64
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x86.ActiveCfg = Release|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x86.Build.0 = Release|x86
-		{DC413CD7-305F-4142-A476-97C162851635}.Release|x86.Deploy.0 = Release|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|ARM.ActiveCfg = Debug|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|ARM.Build.0 = Debug|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|ARM.Deploy.0 = Debug|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x64.ActiveCfg = Debug|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x64.Build.0 = Debug|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x64.Deploy.0 = Debug|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x86.ActiveCfg = Debug|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x86.Build.0 = Debug|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|x86.Deploy.0 = Debug|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|Any CPU.ActiveCfg = Release|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|ARM.ActiveCfg = Release|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|ARM.Build.0 = Release|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|ARM.Deploy.0 = Release|ARM
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x64.ActiveCfg = Release|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x64.Build.0 = Release|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x64.Deploy.0 = Release|x64
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.ActiveCfg = Release|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.Build.0 = Release|x86
+		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

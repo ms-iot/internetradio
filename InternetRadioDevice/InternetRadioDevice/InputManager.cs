@@ -67,7 +67,7 @@ namespace InternetRadioDevice
             }
 
             listener.ConnectionReceived += connectionReceived;
-            await listener.BindServiceNameAsync("3011");
+            await listener.BindServiceNameAsync(Config.Api.Port.ToString());
         }
 
 

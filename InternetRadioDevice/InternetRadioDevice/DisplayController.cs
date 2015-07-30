@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Win10_LCD;
+using Callant;
 using Windows.System.Threading;
 
 namespace InternetRadioDevice
 {
     class DisplayController
     {
-        private LCD lcd;
+        private CharacterLCD lcd;
         private string currentLineOne;
         private string currentLineTwo;
         private string tempLineOne;
@@ -83,20 +83,14 @@ namespace InternetRadioDevice
 
         private async Task initLCD()
         {
-            lcd = new LCD(Config.Display.Width, Config.Display.Height);
-            await lcd.InitAsync(Config.Display.RsPin, Config.Display.EnablePin, Config.Display.D4Pin, Config.Display.D5Pin, Config.Display.D6Pin, Config.Display.D7Pin);
-            await lcd.clearAsync();
+            this.lcd = new CharacterLCD(Config.Display.RsPin, Config.Display.EnablePin, 26, 25, 0, 0, Config.Display.D4Pin, Config.Display.D5Pin, Config.Display.D6Pin, Config.Display.D7Pin);
         }
 
         private async Task writeMessageToLcd(string lineOne, string lineTwo)
         {
             while (isUpdating) ;
             isUpdating = true;
-            await lcd.clearAsync();
-            lcd.setCursor(0, 0);
-            lcd.write(lineOne);
-            lcd.setCursor(0, 1);
-            lcd.write(lineTwo);
+            this.lcd.WriteLCD(lineOne+"\n"+lineTwo);
             isUpdating = false;
         }
     }
