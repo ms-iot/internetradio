@@ -36,7 +36,7 @@ namespace InternetRadioDevice
         public App()
         {
             TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
-            
+            TelemetryClient.Context.Properties.Add("Alias", "");
 
             this.InitializeComponent();
             this.Suspending += OnSuspending;

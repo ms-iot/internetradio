@@ -124,6 +124,7 @@ namespace InternetRadioDevice
         private void HandleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
             Debug.WriteLine("Value Change on pin:" + sender.PinNumber +" : " + args.Edge);
+            App.TelemetryClient.TrackEvent("Action_PhysicalButton");
             if (args.Edge == GpioPinEdge.RisingEdge)
             {
                 InputRecieved(this, new InputRecievedEventArgs { Action = Config.Buttons.ButtonPins[sender.PinNumber], Message="" });

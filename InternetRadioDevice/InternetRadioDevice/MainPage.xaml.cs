@@ -36,7 +36,7 @@ namespace InternetRadioDevice
         private InputManager inputManager;
 
         public MainPage()
-        {
+        {          
             isAsleep = false;
             this.InitializeComponent();
 
@@ -92,12 +92,12 @@ namespace InternetRadioDevice
         {
             if (isAsleep)
             {
-                //App.TelemetryManager.TrackEvent("App_Wake");
+                App.TelemetryClient.TrackEvent("Wake");
                 await startup();
             }
             else
             {
-                //App.TelemetryManager.TrackEvent("App_Sleep");
+                App.TelemetryClient.TrackEvent("Sleep");
                 await shutdown();
             }
 

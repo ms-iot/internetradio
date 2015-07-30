@@ -83,7 +83,7 @@ namespace InternetRadioDevice
 
         private async Task initLCD()
         {
-            this.lcd = new CharacterLCD(Config.Display.RsPin, Config.Display.EnablePin, 26, 25, 0, 0, Config.Display.D4Pin, Config.Display.D5Pin, Config.Display.D6Pin, Config.Display.D7Pin);
+            this.lcd = new CharacterLCD(Config.Display.RsPin, Config.Display.EnablePin, Config.Display.D4Pin, Config.Display.D5Pin, Config.Display.D6Pin, Config.Display.D7Pin);
         }
 
         private async Task writeMessageToLcd(string lineOne, string lineTwo)
