@@ -90,7 +90,7 @@ namespace InternetRadioDevice
         {
             while (isUpdating) ;
             isUpdating = true;
-            this.lcd.WriteLCD(lineOne+"\n"+lineTwo);
+            await this.lcd.WriteLCD(lineOne+"\n"+lineTwo);
             isUpdating = false;
         }
     }

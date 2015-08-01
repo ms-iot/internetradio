@@ -40,6 +40,8 @@ namespace InternetRadioController
             TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
             TelemetryClient.Context.Properties.Add("Alias", "");
 
+            //Windows.Media.Playback.MediaPlayer
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }

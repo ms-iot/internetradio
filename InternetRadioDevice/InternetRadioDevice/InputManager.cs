@@ -17,7 +17,8 @@ namespace InternetRadioDevice
         VolumeUp,
         VolumeDown,
         Sleep,
-        AddChannel
+        AddChannel,
+        DeleteChannel
     }
 
     public class InputRecievedEventArgs
@@ -93,6 +94,8 @@ namespace InternetRadioDevice
             uint numStrBytes = await dr.LoadAsync((uint)strLength);
             string command = dr.ReadString(3);
 
+            App.TelemetryClient.TrackEvent("Action_NetworkCommand");
+
             switch (command)
             {
                 case "Pre":
@@ -113,6 +116,13 @@ namespace InternetRadioDevice
                 case "Add":
                     string newPreset = dr.ReadString((uint)strLength - 3);
                     InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.AddChannel, Message = newPreset });
+                    break;
+                case "Del":
+                    string presetToDelete = dr.ReadString((uint)strLength - 3);
+                    InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.DeleteChannel, Message = presetToDelete });
+                    break;
+                default:
+                    App.TelemetryClient.TrackEvent("Network_InvalidCommand");
                     break;
             }
 

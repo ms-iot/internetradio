@@ -59,6 +59,18 @@ namespace InternetRadioDevice
             savePresets();
         }
 
+        public void DeleteChannel(string channelName)
+        {
+            if (radioPresets.Any(channel => channel.Name == channelName))
+            {
+                radioPresets.RemoveAll(x => x.Name == channelName);
+            }
+            else
+            {
+                Debug.WriteLine("Channel: " + channelName + "does not exist and therefore cannot be deleted");
+            }
+        }
+
         private Channel getPreset(int presetNumber)
         {
             if (radioPresets.Count == 0)

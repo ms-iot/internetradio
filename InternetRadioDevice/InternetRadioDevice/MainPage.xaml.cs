@@ -19,6 +19,7 @@ using Windows.Devices.Gpio;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Media.Playback;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -60,6 +61,8 @@ namespace InternetRadioDevice
                   {
                       this.radioPlayer.Pause();
                   });
+            await Task.Delay(Config.Messages.StartupMessageDelay);
+            await displayController.WriteMessageAsync(String.Empty, String.Empty, 0);
         }
 
         private async Task playChannel(Channel channel)
@@ -109,8 +112,21 @@ namespace InternetRadioDevice
             switch(e.Action)
             {
                 case InputAction.AddChannel:
-                    var presetData = e.Message.Split(';');
-                    presetManager.AddChannel(new Channel(presetData[0], new Uri(presetData[1])));
+                    Channel newPreset;
+                    if (checkAndDeserialzePreset(e.Message, out newPreset))
+                    {
+                        presetManager.AddChannel(newPreset);
+                        await displayController.WriteMessageAsync("Preset Added:", newPreset.Name, 3);
+                        break;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Preset added from network was invalid, ignoring");
+                    }
+
+                    break;
+                case InputAction.DeleteChannel:
+
                     break;
                 case InputAction.NextChannel:
                     await playChannel(presetManager.NextChannel());
@@ -141,6 +157,27 @@ namespace InternetRadioDevice
         private async void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             await shutdown();
+        }
+
+        private bool checkAndDeserialzePreset(string serializedPreset, out Channel preset)
+        {
+            preset = null;
+
+            var presetData = serializedPreset.Split(';');
+
+            if (presetData.Count() == 2)
+            {
+                Uri channelUri;
+
+                if (Uri.TryCreate(presetData[1], UriKind.Absolute, out channelUri))
+                {
+                    preset = new Channel(presetData[0], channelUri);
+                    return true;
+                }
+            }
+
+
+            return false;
         }
     }
 }
