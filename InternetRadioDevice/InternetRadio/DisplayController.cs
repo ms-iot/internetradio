@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 using Callant;
 using Windows.System.Threading;
+using System.Diagnostics;
 
-namespace InternetRadioDevice
+namespace InternetRadio
 {
     class DisplayController
     {
@@ -18,7 +19,6 @@ namespace InternetRadioDevice
         private string tempLineOne;
         private string tempLineTwo;
         private bool isUpdating;
-        private bool tempMessageExecuting;
         private ThreadPoolTimer tempTimer;
 
         public async Task Initialize()
@@ -83,15 +83,43 @@ namespace InternetRadioDevice
 
         private async Task initLCD()
         {
-            this.lcd = new CharacterLCD(Config.Display.RsPin, Config.Display.EnablePin, Config.Display.D4Pin, Config.Display.D5Pin, Config.Display.D6Pin, Config.Display.D7Pin);
+            try
+            {
+                this.lcd = new CharacterLCD(Config.Display_RsPin,
+                                            Config.Display_EnablePin, 
+                                            Config.Display_D4Pin, 
+                                            Config.Display_D5Pin, 
+                                            Config.Display_D6Pin, 
+                                            Config.Display_D7Pin);
+            }
+            catch(NullReferenceException)
+            {
+                Debug.WriteLine("Unable to initialize LCD");
+            }
         }
 
         private async Task writeMessageToLcd(string lineOne, string lineTwo)
         {
+            if (!checkInitialized())
+                return;
+
             while (isUpdating) ;
             isUpdating = true;
             await this.lcd.WriteLCD(lineOne+"\n"+lineTwo);
             isUpdating = false;
+        }
+
+        private bool checkInitialized()
+        {
+            if (lcd == null)
+            {
+                Debug.WriteLine("LCD is not initialized");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

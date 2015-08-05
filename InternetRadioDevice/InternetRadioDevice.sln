@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioDevice", "InternetRadioDevice\InternetRadioDevice.csproj", "{61236543-3077-4BFD-A9B7-1C286A91C1FA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioController", "InternetRadioController\InternetRadioController.csproj", "{895696B1-A4B8-4864-89E1-C9067AA8A542}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadio", "InternetRadio\InternetRadio.csproj", "{20A2542F-14EA-458D-9118-5AE4E13C0E05}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "InternetRadioRestApi", "InternetRadioRestApi\InternetRadioRestApi.njsproj", "{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,26 +21,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|ARM.ActiveCfg = Debug|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|ARM.Build.0 = Debug|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|ARM.Deploy.0 = Debug|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x64.ActiveCfg = Debug|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x64.Build.0 = Debug|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x64.Deploy.0 = Debug|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x86.ActiveCfg = Debug|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x86.Build.0 = Debug|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Debug|x86.Deploy.0 = Debug|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|Any CPU.ActiveCfg = Release|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|ARM.ActiveCfg = Release|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|ARM.Build.0 = Release|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|ARM.Deploy.0 = Release|ARM
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x64.ActiveCfg = Release|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x64.Build.0 = Release|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x64.Deploy.0 = Release|x64
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.ActiveCfg = Release|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.Build.0 = Release|x86
-		{61236543-3077-4BFD-A9B7-1C286A91C1FA}.Release|x86.Deploy.0 = Release|x86
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|ARM.ActiveCfg = Debug|ARM
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Debug|ARM.Build.0 = Debug|ARM
@@ -59,6 +41,46 @@ Global
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.ActiveCfg = Release|x86
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.Build.0 = Release|x86
 		{895696B1-A4B8-4864-89E1-C9067AA8A542}.Release|x86.Deploy.0 = Release|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|ARM.ActiveCfg = Debug|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|ARM.Build.0 = Debug|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|ARM.Deploy.0 = Debug|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x64.ActiveCfg = Debug|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x64.Build.0 = Debug|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x64.Deploy.0 = Debug|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x86.ActiveCfg = Debug|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x86.Build.0 = Debug|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Debug|x86.Deploy.0 = Debug|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|Any CPU.ActiveCfg = Release|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|ARM.ActiveCfg = Release|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|ARM.Build.0 = Release|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|ARM.Deploy.0 = Release|ARM
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x64.ActiveCfg = Release|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x64.Build.0 = Release|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x64.Deploy.0 = Release|x64
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.ActiveCfg = Release|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.Build.0 = Release|x86
+		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.Deploy.0 = Release|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|ARM.Build.0 = Debug|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|ARM.Deploy.0 = Debug|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x64.ActiveCfg = Debug|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x64.Build.0 = Debug|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x64.Deploy.0 = Debug|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x86.ActiveCfg = Debug|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x86.Build.0 = Debug|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Debug|x86.Deploy.0 = Debug|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|Any CPU.ActiveCfg = Release|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|ARM.ActiveCfg = Release|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|ARM.Build.0 = Release|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|ARM.Deploy.0 = Release|ARM
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x64.ActiveCfg = Release|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x64.Build.0 = Release|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x64.Deploy.0 = Release|x64
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x86.ActiveCfg = Release|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x86.Build.0 = Release|x86
+		{F5E7AFA2-AEAE-4D32-83EB-BCA3F2794BEF}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

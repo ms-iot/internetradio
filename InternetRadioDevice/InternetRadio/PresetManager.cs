@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InternetRadioDevice
+namespace InternetRadio
 {
     class PresetManager
     {
@@ -74,7 +74,10 @@ namespace InternetRadioDevice
         private Channel getPreset(int presetNumber)
         {
             if (radioPresets.Count == 0)
-                return new Channel("", new Uri("http://localhost"));
+            {
+                var channel = new Channel() { Address = "", Name = "" };
+                return channel;
+            }
 
             return radioPresets[presetNumber];
         }
@@ -115,7 +118,7 @@ namespace InternetRadioDevice
 
                     if (presetPart.Length == 2)
                     {
-                        radioPresets.Add(new Channel(presetPart[0], new Uri(presetPart[1])));
+                        radioPresets.Add(new Channel() { Name = presetPart[0], Address = presetPart[1] });
                     }
                     else
                     {
