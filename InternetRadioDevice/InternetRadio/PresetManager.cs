@@ -18,12 +18,17 @@ namespace InternetRadio
             loadPresets();
         }
 
-        public Channel CurrentChannel()
+        public Channel CurrentPreset()
         {
             return getPreset(currentPreset);
         }
 
-        public Channel NextChannel()
+        public List<Channel> GetPresets()
+        {
+            return this.radioPresets;
+        }
+
+        public Channel NextPreset()
         {
             if (currentPreset < radioPresets.Count() - 1)
             {
@@ -38,7 +43,7 @@ namespace InternetRadio
             return getPreset(currentPreset);
         }
 
-        public Channel PreviousChannel()
+        public Channel PreviousPreset()
         {
             if (currentPreset != 0)
             {
@@ -53,13 +58,13 @@ namespace InternetRadio
             return getPreset(currentPreset);
         }
 
-        public void AddChannel(Channel channel)
+        public void AddPreset(Channel channel)
         {
             radioPresets.Add(channel);
             savePresets();
         }
 
-        public void DeleteChannel(string channelName)
+        public void DeletePreset(string channelName)
         {
             if (radioPresets.Any(channel => channel.Name == channelName))
             {

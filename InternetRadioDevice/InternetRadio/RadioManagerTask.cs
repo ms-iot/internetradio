@@ -1,5 +1,6 @@
 ﻿using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.Foundation.Collections;
 
 namespace InternetRadio
 {
@@ -34,21 +35,55 @@ namespace InternetRadio
 
             switch (command)
             {
+                case "Power":
+                    await StartupTask.RadioManager.ToggleSleep();
+                    messageDeferral.Complete();
+                    sender.Dispose();
+                    serviceDeferral.Complete();
+                    break;
+
+                    // Media Commands
                 case "Next":
                     StartupTask.RadioManager.NextPreset();
                     messageDeferral.Complete();
-                    serviceDeferral.Complete();
                     break;
                 case "Previous":
                     StartupTask.RadioManager.NextPreset();
                     messageDeferral.Complete();
-                    serviceDeferral.Complete();
                     break;
-                case "Power":
-                    await StartupTask.RadioManager.ToggleSleep();
+                case "VolumeUp":
+                    await StartupTask.RadioManager.VolumeUp();
                     messageDeferral.Complete();
-                    serviceDeferral.Complete();
                     break;
+                case "VolumeDown":
+                    await StartupTask.RadioManager.VolumeDown();
+                    messageDeferral.Complete();
+                    break;
+
+                    // Preset commands
+                case "GetPresets":
+                    var presets = StartupTask.PresetManager.GetPresets();
+
+                    var returnMessage = new ValueSet();
+                    returnMessage.Add("Presets", presets);
+
+                    var responseStatus = args.Request.SendResponseAsync(returnMessage);
+                    messageDeferral.Complete();
+
+                    break;
+                case "AddPreset":
+                    string presetName = message["PresetName"] as string;
+                    string presetAddress = message["PresetAddress"] as string;
+                    var newPreset = new Channel() { Name = presetName, Address = presetAddress };
+                    StartupTask.PresetManager.AddPreset(newPreset);
+                    messageDeferral.Complete();
+                    break;
+                case "DeletePreset":
+                    string presetToDeleteName = message["PresetName"] as string;
+                    StartupTask.PresetManager.DeletePreset(presetToDeleteName);
+                    messageDeferral.Complete();
+                    break;
+
             }
         }
 

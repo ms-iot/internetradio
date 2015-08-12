@@ -16,10 +16,14 @@ namespace InternetRadio
         private DisplayController displayController;
         private InputManager inputManager;
 
+        public RadioManager(PresetManager presetManager)
+        {
+            this.presetManager = presetManager;
+        }
+
         public async Task Initialize()
         {
             this.isAsleep = false;
-            this.presetManager = new PresetManager();
 
             this.displayController = new DisplayController();
             await this.displayController.Initialize();
@@ -60,12 +64,22 @@ namespace InternetRadio
 
         public void NextPreset()
         {
-            playChannel(this.presetManager.NextChannel());
+            playChannel(this.presetManager.NextPreset());
         }
 
         public void PreviousPreset()
         {
-            playChannel(this.presetManager.PreviousChannel());
+            playChannel(this.presetManager.PreviousPreset());
+        }
+
+        public async Task VolumeUp()
+        {
+            await changeVolume(0.1);
+        }
+
+        public async Task VolumeDown()
+        {
+            await changeVolume(-0.1);
         }
 
         private async Task wake()
@@ -73,7 +87,7 @@ namespace InternetRadio
             await this.displayController.WriteMessageAsync(Config.Messages_StartupMessageLineOne, Config.Messages_StartupMessageLineTwo, 0);
 
             await Task.Delay(Config.Messages_StartupMessageDelay);
-            playChannel(this.presetManager.CurrentChannel());
+            playChannel(this.presetManager.CurrentPreset());
             this.isAsleep = false;
         }
 
@@ -83,12 +97,14 @@ namespace InternetRadio
             this.mediaEngine.Pause();
             await Task.Delay(Config.Messages_StartupMessageDelay);
             await this.displayController.WriteMessageAsync(String.Empty, String.Empty, 0);
+            this.isAsleep = true;
         }
 
-        private void playChannel(Channel channel)
+        private async void playChannel(Channel channel)
         {
             Debug.WriteLine("Play Channel: " + channel.Name);
             this.mediaEngine.Play(channel.Address.ToString());
+            await this.displayController.WriteMessageAsync("Now Playing: ", channel.Name, 0);
         }
 
         private async Task changeVolume(double volumeChange)
@@ -111,7 +127,7 @@ namespace InternetRadio
                     break;
 
                 case MediaState.Playing:
-                    await this.displayController.WriteMessageAsync("Now Playing: ", this.presetManager.CurrentChannel().Name, 0);
+                    await this.displayController.WriteMessageAsync("Now Playing: ", this.presetManager.CurrentPreset().Name, 0);
                     break;
 
                 case MediaState.Error:
@@ -128,7 +144,7 @@ namespace InternetRadio
                     Channel newPreset;
                     if (checkAndDeserialzePreset(e.Message, out newPreset))
                     {
-                        this.presetManager.AddChannel(newPreset);
+                        this.presetManager.AddPreset(newPreset);
                         await this.displayController.WriteMessageAsync("Preset Added:", newPreset.Name, 3);
                         break;
                     }
@@ -148,10 +164,10 @@ namespace InternetRadio
                     PreviousPreset();
                     break;
                 case InputAction.VolumeDown:
-                    await changeVolume(-0.1);
+                    await VolumeDown();
                     break;
                 case InputAction.VolumeUp:
-                    await changeVolume(0.1);
+                    await VolumeUp();
                     break;
                 case InputAction.Sleep:
                     await ToggleSleep();

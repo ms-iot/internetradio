@@ -16,6 +16,7 @@ namespace InternetRadio
 {
     public sealed class StartupTask : IBackgroundTask
     {
+        internal static PresetManager PresetManager;
         internal static RadioManager RadioManager;
 
         private BackgroundTaskDeferral defferal;
@@ -30,7 +31,8 @@ namespace InternetRadio
 
             if (null == RadioManager)
             {
-                RadioManager = new RadioManager();
+                PresetManager = new PresetManager();
+                RadioManager = new RadioManager(PresetManager);
                 await RadioManager.Initialize();
             }
         }
