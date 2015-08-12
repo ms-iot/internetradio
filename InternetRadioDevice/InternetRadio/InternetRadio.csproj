@@ -99,7 +99,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllJoynAdapter.cs" />
     <Compile Include="Channel.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DisplayController.cs" />
