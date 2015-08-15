@@ -15,6 +15,13 @@ namespace InternetRadioController
         public MainPage()
         {
             this.InitializeComponent();
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            if (localSettings.Values.ContainsKey("previousAddress"))
+                this.addressTextBox.Text = localSettings.Values["previousAddress"].ToString();
+
+            if (localSettings.Values.ContainsKey("previousPort"))
+                this.portTextPox.Text = localSettings.Values["previousPort"].ToString();
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -22,6 +29,9 @@ namespace InternetRadioController
             try
             {
                 await App.ConnectionHandler.Connect(this.addressTextBox.Text, this.portTextPox.Text);
+                Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                localSettings.Values["previousAddress"] = this.addressTextBox.Text;
+                localSettings.Values["previousPort"] = this.portTextPox.Text;
                 this.Frame.Navigate(typeof(RadioControls));
             }
             catch (Exception)

@@ -21,15 +21,14 @@ namespace InternetRadio
         DeleteChannel
     }
 
-    public struct InputRecievedEventArgs
+    internal struct InputRecievedEventArgs
     {
         public InputAction Action;
-        public string Message;
+        public Channel Channel;
     }
 
     // A delegate type for hooking up change notifications.
     delegate void InputRecievedEventHandler(object sender, InputRecievedEventArgs e);
-
 
     class InputManager
     {
@@ -44,6 +43,8 @@ namespace InternetRadio
         {
             listener.ConnectionReceived += connectionReceived;
             await listener.BindServiceNameAsync(Config.Api_Port.ToString());
+
+            SetupGpio();
         }
 
         private void SetupGpio()
@@ -62,7 +63,7 @@ namespace InternetRadio
                     {
                         button.DebounceTimeout = new TimeSpan(Config.Buttons_Debounce);
                         button.SetDriveMode(GpioPinDriveMode.Input);
-                        button.ValueChanged += HandleButton;
+                        button.ValueChanged += handleButton;
                         Debug.WriteLine("Button on pin " + pinSetting.Value + " successfully bound for action: " + pinSetting.Key.ToString());
                         actionButtons.Add(pinSetting.Value, button);
                         button = null;
@@ -70,7 +71,7 @@ namespace InternetRadio
                     }
                 }
 
-                Debug.WriteLine("Error: Button on pin " + pinSetting.Value + " was unable to be bound becuase: " + status.ToString());
+                Debug.WriteLine("Error: Button on pin " + pinSetting.Value + " was unable to be bound because: " + status.ToString());
             }
         }
 
@@ -85,7 +86,16 @@ namespace InternetRadio
         async private void waitForData(StreamSocket socket)
         {
             var dr = new DataReader(socket.InputStream);
-            var stringHeader = await dr.LoadAsync(4);
+            uint stringHeader;
+            try
+            {
+                stringHeader = await dr.LoadAsync(4);
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Lost connection to remote");
+                return;
+            }
 
             if (stringHeader == 0)
             {
@@ -97,7 +107,7 @@ namespace InternetRadio
             uint numStrBytes = await dr.LoadAsync((uint)strLength);
             string command = dr.ReadString(3);
 
-            //App.TelemetryClient.TrackEvent("Action_NetworkCommand");
+            StartupTask.WriteTelemetryEvent("Action_NetworkCommand");
 
             switch (command)
             {
@@ -117,15 +127,17 @@ namespace InternetRadio
                     InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.Sleep });
                     break;
                 case "Add":
-                    string newPreset = dr.ReadString((uint)strLength - 3);
-                    InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.AddChannel, Message = newPreset });
+                    string newPresetStr = dr.ReadString((uint)strLength - 3);
+                    Channel newPreset = deserialzePreset(newPresetStr);
+                    InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.AddChannel, Channel = newPreset });
                     break;
                 case "Del":
-                    string presetToDelete = dr.ReadString((uint)strLength - 3);
-                    InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.DeleteChannel, Message = presetToDelete });
+                    string presetToDeleteStr = dr.ReadString((uint)strLength - 3);
+                    Channel presetToDelete = deserialzePreset(presetToDeleteStr);
+                    InputRecieved(this, new InputRecievedEventArgs { Action = InputAction.DeleteChannel, Channel = presetToDelete });
                     break;
                 default:
-                    //App.TelemetryClient.TrackEvent("Network_InvalidCommand");
+                    StartupTask.WriteTelemetryEvent("Network_InvalidCommand");
                     break;
             }
 
@@ -134,14 +146,30 @@ namespace InternetRadio
             waitForData(socket);
         }
 
-        private void HandleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
+        private void handleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
             Debug.WriteLine("Value Change on pin:" + sender.PinNumber +" : " + args.Edge);
-            //App.TelemetryClient.TrackEvent("Action_PhysicalButton");
+            StartupTask.WriteTelemetryEvent("Action_PhysicalButton");
             if (args.Edge == GpioPinEdge.RisingEdge)
             {
-                InputRecieved(this, new InputRecievedEventArgs { Action = Config.Buttons_Pins[sender.PinNumber], Message="" });
+                InputRecieved(this, new InputRecievedEventArgs { Action = Config.Buttons_Pins[sender.PinNumber] });
             }
+        }
+
+        private Channel deserialzePreset(string serializedPreset)
+        {
+            var preset = new Channel();
+            var presetData = serializedPreset.Split(';');
+
+            preset.Name = presetData.ElementAtOrDefault(0);
+
+            Uri channelUri;
+            if (Uri.TryCreate(presetData.ElementAtOrDefault(1), UriKind.Absolute, out channelUri))
+            {
+                preset.Address = channelUri.ToString();
+            }
+
+            return preset;
         }
     }
 }

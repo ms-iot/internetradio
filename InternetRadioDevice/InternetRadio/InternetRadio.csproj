@@ -103,7 +103,6 @@
     <Compile Include="Config.cs" />
     <Compile Include="DisplayController.cs" />
     <Compile Include="InputManager.cs" />
-    <Compile Include="RadioManagerTask.cs" />
     <Compile Include="PresetManager.cs" />
     <Compile Include="RadioManager.cs" />
     <Compile Include="StartupTask.cs" />

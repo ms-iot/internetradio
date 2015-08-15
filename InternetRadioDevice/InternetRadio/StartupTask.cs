@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
+using Windows.UI.Xaml;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -16,55 +17,46 @@ namespace InternetRadio
 {
     public sealed class StartupTask : IBackgroundTask
     {
-        internal static PresetManager PresetManager;
-        internal static RadioManager RadioManager;
+        private static TelemetryClient TelemetryClient;
 
-        private BackgroundTaskDeferral defferal;
-        private static TelemetryClient TelemetryClient = null;
+        private BackgroundTaskDeferral deferral;
+        private RadioManager radioManager;
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
-            WriteTelemetryEvent("Startup");
+            WriteTelemetryEvent("App_Startup");
 
-            defferal = taskInstance.GetDeferral();
+            deferral = taskInstance.GetDeferral();
             taskInstance.Canceled += TaskInstance_Canceled;
 
-            if (null == RadioManager)
-            {
-                PresetManager = new PresetManager();
-                RadioManager = new RadioManager(PresetManager);
-                await RadioManager.Initialize();
-            }
+            radioManager = new RadioManager();
+            await radioManager.Initialize();
         }
 
         public static void WriteTelemetryEvent(string eventName)
         {
+            WriteTelemetryEvent(eventName, new Dictionary<string, string>());
+        }
+
+        public static void WriteTelemetryEvent(string eventName, IDictionary<string, string> properties)
+        {
             if (null == TelemetryClient)
             {
-                //var telemetryConfig = new TelemetryConfiguration();
-                //telemetryConfig.InstrumentationKey = "30c9af2e-6da0-4733-93a0-de9a4c94f2ab";
                 TelemetryClient = new TelemetryClient();
             }
 
-            TelemetryClient.TrackEvent(eventName);
+            TelemetryClient.TrackEvent(eventName, properties);
         }
 
-        private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        private async void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            //a few reasons that you may be interested in.
-            switch (reason)
-            {
-                case BackgroundTaskCancellationReason.Abort:
-                    //app unregistered background task (amoung other reasons).
-                    break;
-                case BackgroundTaskCancellationReason.Terminating:
-                    break;
-                case BackgroundTaskCancellationReason.ConditionLoss:
-                    break;
-                case BackgroundTaskCancellationReason.SystemPolicy:
-                    break;
-            }
-            defferal.Complete();
+            var properties = new Dictionary<string, string>();
+            properties.Add("Reason", reason.ToString());
+            WriteTelemetryEvent("App_Shutdown", properties);
+
+            await this.radioManager.Dispose();
+
+            deferral.Complete();
         }
     }
 }

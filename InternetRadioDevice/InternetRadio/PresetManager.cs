@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace InternetRadio
 {
+    internal struct PresetAddedEventArgs
+    {
+        public Channel Preset;
+    }
+
+    delegate void PresetAddedEventHandler(object sender, PresetAddedEventArgs e);
+
     class PresetManager
     {
         private List<Channel> radioPresets;
         int currentPreset;
+
+        public event PresetAddedEventHandler PresetAdded;
 
         public PresetManager()
         {
@@ -20,7 +29,11 @@ namespace InternetRadio
 
         public Channel CurrentPreset()
         {
-            return getPreset(currentPreset);
+            Channel? preset;
+
+            tryGetPreset(currentPreset, out preset);
+
+            return preset.Value;
         }
 
         public List<Channel> GetPresets()
@@ -30,6 +43,8 @@ namespace InternetRadio
 
         public Channel NextPreset()
         {
+            Channel? preset;
+
             if (currentPreset < radioPresets.Count() - 1)
             {
                 currentPreset++;
@@ -40,11 +55,16 @@ namespace InternetRadio
             }
 
             savePresets();
-            return getPreset(currentPreset);
+
+            tryGetPreset(currentPreset, out preset);
+
+            return preset.Value;
         }
 
         public Channel PreviousPreset()
         {
+            Channel? preset;
+
             if (currentPreset != 0)
             {
                 currentPreset--;
@@ -55,13 +75,28 @@ namespace InternetRadio
             }
 
             savePresets();
-            return getPreset(currentPreset);
+
+            if (!tryGetPreset(currentPreset, out preset))
+                throw new Exception("");
+
+            return preset.Value;
         }
 
-        public void AddPreset(Channel channel)
+        public bool AddPreset(Channel channel)
         {
-            radioPresets.Add(channel);
-            savePresets();
+            if (checkValidPreset(channel))
+            {
+                this.radioPresets.Add(channel);
+                this.savePresets();
+                var presetAddedArgs = new PresetAddedEventArgs()
+                {
+                    Preset = channel
+                };
+
+                this.PresetAdded(this, presetAddedArgs);
+                return true;
+            }
+            return false;
         }
 
         public void DeletePreset(string channelName)
@@ -76,15 +111,18 @@ namespace InternetRadio
             }
         }
 
-        private Channel getPreset(int presetNumber)
+        private bool tryGetPreset(int presetNumber, out Channel? channel)
         {
+            channel = null;
+
             if (radioPresets.Count == 0)
             {
-                var channel = new Channel() { Address = "", Name = "" };
-                return channel;
+                return false;
             }
 
-            return radioPresets[presetNumber];
+            channel = radioPresets[presetNumber];
+
+            return true;
         }
 
         private void savePresets()
@@ -99,7 +137,7 @@ namespace InternetRadio
                 seralizedPresets += preset.Name + ";" + preset.Address + "|";
             }
 
-            localSettings.Values["presets"] = seralizedPresets;
+            localSettings.Values["radioPresets"] = seralizedPresets;
         }
 
         private void loadPresets()
@@ -115,22 +153,53 @@ namespace InternetRadio
                 currentPreset = 0;
             }
 
-            if (localSettings.Values.ContainsKey("presets"))
+            if (localSettings.Values.ContainsKey("radioPresets"))
             {
-                foreach (var preset in (localSettings.Values["presets"] as string).Split('|'))
+                var presetData = localSettings.Values["radioPresets"].ToString().Split('|');
+                foreach(var preset in presetData)
                 {
-                    var presetPart = preset.Split(';');
+                    var presetSplit = preset.Split(';');
+                    if (presetSplit.Count() == 2)
+                    {
+                        Channel channel = new Channel();
+                        channel.Name = presetSplit[0];
+                        channel.Address = presetSplit[1];
+                        if (checkValidPreset(channel))
+                        {
+                            this.radioPresets.Add(channel);
+                            continue;
+                        }
+                    }
 
-                    if (presetPart.Length == 2)
-                    {
-                        radioPresets.Add(new Channel() { Name = presetPart[0], Address = presetPart[1] });
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Invlaid Preset loaded from settings");
-                    }
+                    Debug.WriteLine("Invalid preset loaded");
+                    StartupTask.WriteTelemetryEvent("App_InvalidPresetLoaded");
                 }
             }
         }
+
+        private bool checkValidPreset(Channel channel)
+        {
+            if (string.Empty == channel.Name)
+            {
+                Debug.WriteLine("Preset Name must not be an empty string");
+                return false;
+            }
+
+            if (radioPresets.Any(c => c.Name == channel.Name))
+            {
+                Debug.WriteLine("Preset " + channel.Name + " already exists");
+                return false;
+            }
+
+            Uri testUri;
+            if (!Uri.TryCreate(channel.Address, UriKind.Absolute, out testUri))
+            {
+                Debug.WriteLine("Preset Address must be valid Uri");
+                return false;
+            }
+
+            return true;
+        }
+        
     }
 }

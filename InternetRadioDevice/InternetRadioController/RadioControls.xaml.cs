@@ -35,22 +35,22 @@ namespace InternetRadioController
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-             App.ConnectionHandler.SendMessage("Nex");
+             await App.ConnectionHandler.SendMessage("Nex");
         }
 
         private async void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            App.ConnectionHandler.SendMessage("Pre");
+            await App.ConnectionHandler.SendMessage("Pre");
         }
 
-        private void Button_Click_3(object sender, RoutedEventArgs e)
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            App.ConnectionHandler.SendMessage("Vup");
+            await App.ConnectionHandler.SendMessage("Vup");
         }
 
-        private void Button_Click_4(object sender, RoutedEventArgs e)
+        private async void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            App.ConnectionHandler.SendMessage("Vdn");
+            await App.ConnectionHandler.SendMessage("Vdn");
         }
 
         private async void Button_Click_5(object sender, RoutedEventArgs e)
@@ -62,9 +62,9 @@ namespace InternetRadioController
             await dialog.ShowAsync();
         }
 
-        private void Button_Click_6(object sender, RoutedEventArgs e)
+        private async void Button_Click_6(object sender, RoutedEventArgs e)
         {
-            App.ConnectionHandler.SendMessage("Pwr");
+            await App.ConnectionHandler.SendMessage("Pwr");
         }
     }
 }

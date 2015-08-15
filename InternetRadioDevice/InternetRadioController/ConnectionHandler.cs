@@ -20,7 +20,7 @@ namespace InternetRadioController
             await socket.ConnectAsync(new HostName(ip), port);
         }
 
-        public async Task Disconnect()
+        public void Disconnect()
         {
             socket.Dispose();
         }

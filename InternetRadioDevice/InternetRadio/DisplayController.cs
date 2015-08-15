@@ -21,26 +21,32 @@ namespace InternetRadio
         private bool isUpdating;
         private ThreadPoolTimer tempTimer;
 
-        public async Task Initialize()
+        public void Initialize()
         {
             currentLineOne = string.Empty;
             currentLineTwo = string.Empty;
             tempLineOne = string.Empty;
             tempLineTwo = string.Empty;
-
             isUpdating = false;
 
-            await initLCD();
+            initLCD();
         }
 
-        public async Task TearDown()
+        public async Task Dispose()
         {
+            if (tempTimer != null)
+            {
+                tempTimer.Cancel();
+                tempTimer = null;
+            }
+
+            await writeMessageToLcd(string.Empty, string.Empty);
+
             currentLineOne = string.Empty;
             currentLineTwo = string.Empty;
             tempLineOne = string.Empty;
             tempLineTwo = string.Empty;
-
-            await initLCD();
+            isUpdating = true;
         }
 
         public async Task WriteMessageAsync(string lineOne, string lineTwo, uint timeout)
@@ -81,7 +87,7 @@ namespace InternetRadio
             await writeMessageToLcd(currentLineOne, currentLineTwo);
         }
 
-        private async Task initLCD()
+        private void initLCD()
         {
             try
             {
@@ -105,7 +111,7 @@ namespace InternetRadio
 
             while (isUpdating) ;
             isUpdating = true;
-            await this.lcd.WriteLCD(lineOne+"\n"+lineTwo);
+            await this.lcd.WriteLCD(lineOne + "\n" + lineTwo);
             isUpdating = false;
         }
 
