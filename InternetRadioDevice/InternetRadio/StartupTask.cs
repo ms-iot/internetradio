@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using Windows.ApplicationModel.Background;
-using UniversalMediaEngine;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
-using Windows.UI.Xaml;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -17,7 +8,7 @@ namespace InternetRadio
 {
     public sealed class StartupTask : IBackgroundTask
     {
-        private static TelemetryClient TelemetryClient;
+        private static TelemetryClient telemetryClient;
 
         private BackgroundTaskDeferral deferral;
         private RadioManager radioManager;
@@ -40,12 +31,12 @@ namespace InternetRadio
 
         public static void WriteTelemetryEvent(string eventName, IDictionary<string, string> properties)
         {
-            if (null == TelemetryClient)
+            if (null == telemetryClient)
             {
-                TelemetryClient = new TelemetryClient();
+                telemetryClient = new TelemetryClient();
             }
 
-            TelemetryClient.TrackEvent(eventName, properties);
+            telemetryClient.TrackEvent(eventName, properties);
         }
 
         private async void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)

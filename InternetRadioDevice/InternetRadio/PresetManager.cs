@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InternetRadio
 {
@@ -31,7 +29,8 @@ namespace InternetRadio
         {
             Channel? preset;
 
-            tryGetPreset(currentPreset, out preset);
+            if (!tryGetPreset(currentPreset, out preset))
+                throw new Exception("Unable to get preset");
 
             return preset.Value;
         }
@@ -56,7 +55,8 @@ namespace InternetRadio
 
             savePresets();
 
-            tryGetPreset(currentPreset, out preset);
+            if (!tryGetPreset(currentPreset, out preset))
+                throw new Exception("Unable to get preset");
 
             return preset.Value;
         }
@@ -77,7 +77,7 @@ namespace InternetRadio
             savePresets();
 
             if (!tryGetPreset(currentPreset, out preset))
-                throw new Exception("");
+                throw new Exception("Unable to get preset");
 
             return preset.Value;
         }
@@ -101,11 +101,7 @@ namespace InternetRadio
 
         public void DeletePreset(string channelName)
         {
-            if (radioPresets.Any(channel => channel.Name == channelName))
-            {
-                radioPresets.RemoveAll(x => x.Name == channelName);
-            }
-            else
+            if (0 == radioPresets.RemoveAll(x => x.Name == channelName))
             {
                 Debug.WriteLine("Channel: " + channelName + "does not exist and therefore cannot be deleted");
             }
@@ -127,9 +123,13 @@ namespace InternetRadio
 
         private void savePresets()
         {
+            // Save the currently playing preset number to app storage
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["currentPreset"] = currentPreset;
 
+            // Serialize the list of presets and save to app storage.
+            // Presets are delimited by a '|' character and the name/address
+            // values are delimited by a ';' character
             string seralizedPresets = "";
 
             foreach (var preset in radioPresets)
@@ -144,6 +144,7 @@ namespace InternetRadio
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
+            // Load the previously stored preset number or use the default '0' value
             if (localSettings.Values.ContainsKey("currentPreset"))
             {
                 currentPreset = Convert.ToInt32(localSettings.Values["currentPreset"]);
@@ -182,6 +183,14 @@ namespace InternetRadio
             if (string.Empty == channel.Name)
             {
                 Debug.WriteLine("Preset Name must not be an empty string");
+                return false;
+            }
+
+            // These characters are used as delimiters in serialization
+            // and therefore are not valid characters for use in the name
+            if (channel.Name.Contains(';') || channel.Name.Contains('|'))
+            {
+                Debug.WriteLine("Preset Name cannot contain ; or | characters");
                 return false;
             }
 

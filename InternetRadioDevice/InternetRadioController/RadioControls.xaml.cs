@@ -58,6 +58,8 @@ namespace InternetRadioController
             await App.ConnectionHandler.SendMessage("Add" + PresetName.Text + ";" + PresetAddress.Text);
             PresetName.Text = "";
             PresetAddress.Text = "";
+            PresetName.PlaceholderText = "Name";
+            PresetAddress.PlaceholderText = "Address";
             var dialog = new MessageDialog("Preset Added");
             await dialog.ShowAsync();
         }

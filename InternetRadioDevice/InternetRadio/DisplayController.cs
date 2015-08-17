@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 using Callant;
 using Windows.System.Threading;
 using System.Diagnostics;
+using InternetRadio.AsyncHelpers;
 
 namespace InternetRadio
 {
     class DisplayController
     {
         private CharacterLCD lcd;
+        private readonly AsyncSemaphore lcdLock = new AsyncSemaphore(1);
+
         private string currentLineOne;
         private string currentLineTwo;
         private string tempLineOne;
         private string tempLineTwo;
-        private bool isUpdating;
         private ThreadPoolTimer tempTimer;
 
         public void Initialize()
@@ -27,7 +26,6 @@ namespace InternetRadio
             currentLineTwo = string.Empty;
             tempLineOne = string.Empty;
             tempLineTwo = string.Empty;
-            isUpdating = false;
 
             initLCD();
         }
@@ -40,17 +38,18 @@ namespace InternetRadio
                 tempTimer = null;
             }
 
-            await writeMessageToLcd(string.Empty, string.Empty);
-
-            currentLineOne = string.Empty;
-            currentLineTwo = string.Empty;
-            tempLineOne = string.Empty;
-            tempLineTwo = string.Empty;
-            isUpdating = true;
+            if (null != lcd)
+            {
+                await lcd.ClearLCD();
+                lcd.Dispose();
+            }
         }
 
         public async Task WriteMessageAsync(string lineOne, string lineTwo, uint timeout)
         {
+            if (!checkInitialized())
+                return;
+
             if (timeout == 0)
             {
                 currentLineOne = lineOne;
@@ -74,6 +73,9 @@ namespace InternetRadio
 
         public async Task WriteAnimationAsync(List<KeyValuePair<string,string>> frames, uint framesPerSecond)
         {
+            if (!checkInitialized())
+                return;
+
             foreach (var frame in frames)
             {
                 await WriteMessageAsync(frame.Key, frame.Value, 0);
@@ -91,7 +93,7 @@ namespace InternetRadio
         {
             try
             {
-                this.lcd = new CharacterLCD(Config.Display_RsPin,
+                lcd = new CharacterLCD(Config.Display_RsPin,
                                             Config.Display_EnablePin, 
                                             Config.Display_D4Pin, 
                                             Config.Display_D5Pin, 
@@ -101,23 +103,27 @@ namespace InternetRadio
             catch(NullReferenceException)
             {
                 Debug.WriteLine("Unable to initialize LCD");
+                lcd = null;
             }
         }
 
         private async Task writeMessageToLcd(string lineOne, string lineTwo)
         {
-            if (!checkInitialized())
-                return;
+            await lcdLock.WaitAsync();
 
-            while (isUpdating) ;
-            isUpdating = true;
-            await this.lcd.WriteLCD(lineOne + "\n" + lineTwo);
-            isUpdating = false;
+            try
+            { 
+                await lcd.WriteLCD(lineOne + "\n" + lineTwo);
+            }
+            finally
+            {
+                lcdLock.Release();
+            }
         }
 
         private bool checkInitialized()
         {
-            if (lcd == null)
+            if (null == lcd)
             {
                 Debug.WriteLine("LCD is not initialized");
                 return false;

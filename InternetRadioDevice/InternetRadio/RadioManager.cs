@@ -62,7 +62,7 @@ namespace InternetRadio
             if (isAsleep)
             {
                 StartupTask.WriteTelemetryEvent("Wake");
-                await initializeIfNeeded();
+                await wake();
             }
             else
             {
