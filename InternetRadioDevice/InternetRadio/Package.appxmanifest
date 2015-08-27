@@ -21,7 +21,7 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.appService" EntryPoint="InternetRadio.RadioManagerTask">
+        <uap:Extension Category="windows.appService" EntryPoint="InternetRadio.AppServicesBackgroundTask">
           <uap:AppService Name="InternetRadio.RadioManager" />
         </uap:Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="InternetRadio.StartupTask">
@@ -36,5 +36,6 @@
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
     <Capability Name="internetClientServer" />
+    <Capability Name="allJoyn" />
   </Capabilities>
 </Package>

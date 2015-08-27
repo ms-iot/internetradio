@@ -24,15 +24,5 @@ namespace InternetRadioController
         {
             socket.Dispose();
         }
-
-        public async Task SendMessage(string message)
-        {
-            var writer = new DataWriter(socket.OutputStream);
-            var len = writer.MeasureString(message);
-            writer.WriteInt32((int)len);
-            writer.WriteString(message);
-            var ret = await writer.StoreAsync();
-            writer.DetachStream();
-        }
     }
 }

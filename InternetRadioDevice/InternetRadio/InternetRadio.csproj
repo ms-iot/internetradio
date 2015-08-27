@@ -97,15 +97,26 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="project.json" />
+    <None Include="screens.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AsyncHelpers.cs" />
-    <Compile Include="Channel.cs" />
+    <Compile Include="AppServicesBackgroundTask.cs" />
+    <Compile Include="AppServicesInterfaceManager.cs" />
+    <Compile Include="IDevicePowerManager.cs" />
+    <Compile Include="IPlaybackManager.cs" />
+    <Compile Include="RadioPowerManager.cs" />
+    <Compile Include="Track.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="DisplayController.cs" />
-    <Compile Include="InputManager.cs" />
-    <Compile Include="PresetManager.cs" />
+    <Compile Include="GpioInterfaceManager.cs" />
+    <Compile Include="IPlaylistManager.cs" />
+    <Compile Include="Playlist.cs" />
+    <Compile Include="AllJoynInterfaceManager.cs" />
+    <Compile Include="RadioLocalPresetManager.cs" />
     <Compile Include="RadioManager.cs" />
+    <Compile Include="MediaEnginePlaybackManager.cs" />
     <Compile Include="StartupTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -116,6 +127,7 @@
     <None Include="InternetRadio_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="InternetRadioIntrospection.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -131,14 +143,20 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CharacterLCD, Version=1.1.1.0, Culture=neutral, processorArchitecture=ARM">
+    <Reference Include="TextDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=ARM">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\ARM\CharacterLCD.dll</HintPath>
+      <HintPath>References\ARM\TextDisplay.winmd</HintPath>
     </Reference>
     <Reference Include="UniversalMediaEngine, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>References\ARM\UniversalMediaEngine.winmd</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj">
+      <Project>{49460e79-e4ec-40cd-a0c9-02475b990d22}</Project>
+      <Name>InternetRadioAllJoyn</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

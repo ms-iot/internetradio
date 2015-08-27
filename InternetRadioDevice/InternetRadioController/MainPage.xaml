@@ -11,15 +11,8 @@
         <StackPanel>
             <Grid Height="40" Width="100"></Grid>
             <TextBlock FontSize="24" FontWeight="Bold">Radio Setup</TextBlock>
-            <Grid Height="40" Width="100"></Grid>
-            <StackPanel Orientation="Horizontal" Height="40">
-                <TextBlock VerticalAlignment="Center" Margin="10">Address: </TextBlock>
-                <TextBox x:Name="addressTextBox" Width="150" Text=""/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="40">
-                <TextBlock VerticalAlignment="Center" Margin="10">Port:</TextBlock>
-                <TextBox x:Name="portTextPox" Width="150" Text=""/>
-            </StackPanel>
+            <TextBlock>Choose a radio to connect to:</TextBlock>
+            <ListBox Height="300" Name="AvailableRadios" DisplayMemberPath="Name"></ListBox>
             <Button Click="Button_Click">Connect</Button>
         </StackPanel>
     </Grid>

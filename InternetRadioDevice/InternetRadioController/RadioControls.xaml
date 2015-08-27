@@ -5,7 +5,7 @@
     xmlns:local="using:InternetRadioController"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" Height="700" Width="350">
+    mc:Ignorable="d" Height="800" Width="350">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel>
@@ -23,19 +23,28 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Grid.Row="0" Name="vUpButton" Click="Button_Click_3" Width="120">Volume Up</Button>
-            <Button Grid.Column="0" Grid.Row="1" Click="Button_Click_2" Name="preButton" Width="100">Previous</Button>
-            <Button Grid.Column="2" Grid.Row="1" Click="Button_Click_1" Name="nexButton" Width="100">Next</Button>
-            <Button Grid.Column="1" Grid.Row="2" Click="Button_Click_4" Name="vDnButton" Width="120">Volume Down</Button>
-        </Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Grid.Row="1" Click="Button_Click_2" Name="preButton" Width="100">Previous</Button>
+                <Button Grid.Column="2" Grid.Row="1" Click="Button_Click_1" Name="nexButton" Width="100">Next</Button>
+            </Grid>
+            <TextBlock>Volume:</TextBlock>
+            <Slider Name="VolumeSlider"></Slider>
+            
         <Grid Height="20" Width="100"></Grid>
-            <TextBlock FontSize="24" FontWeight="Bold">Preset Options</TextBlock>
-            <StackPanel Orientation="Vertical" Height="125" HorizontalAlignment="Left">
+            <TextBlock FontSize="24" FontWeight="Bold">Currently Playing</TextBlock>
+            <TextBlock Name="CurrentlyPlaying"></TextBlock>
+            <TextBlock FontSize="24" FontWeight="Bold">Presets</TextBlock>
+            <ListBox Name="PresetsList"></ListBox>
+            <StackPanel Orientation="Vertical" Height="160" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <Button Margin="5" Click="Button_Click">Play</Button>
+                    <Button Margin="5" Click="Button_Click_3">Delete</Button>
+                </StackPanel>
+
                 <TextBlock>New Preset:</TextBlock>
                 <TextBox Width="150" Text="Name" Name="PresetName"/>
                 <TextBox Width="150" Text="Address" Name="PresetAddress"/>

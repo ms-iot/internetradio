@@ -18,6 +18,11 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using System.Diagnostics;
 using Windows.UI.Popups;
+using com.microsoft.maker.InternetRadio;
+using Windows.Devices.AllJoyn;
+using System.Collections.ObjectModel;
+using System.Xml.Linq;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,45 +33,134 @@ namespace InternetRadioController
     /// </summary>
     public sealed partial class RadioControls : Page
     {
+        private InternetRadioConsumer internetRadioConsumer;
+
         public RadioControls()
-        {
+        {           
             this.InitializeComponent();
+        }
+   
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var parameter = (MainPage.InternetRadioDeviceRegistrationInfo)e.Parameter;
+
+
+            var joinResult = await InternetRadioConsumer.JoinSessionAsync(parameter.args, parameter.sender);
+
+            if (joinResult.Status == AllJoynStatus.Ok)
+            {
+                internetRadioConsumer = joinResult.Consumer;
+                var volume = await internetRadioConsumer.GetVolumeAsync();
+                
+                VolumeSlider.Value = (volume.Volume * 100);
+                VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
+                internetRadioConsumer.VolumeChanged += InternetRadioConsumer_VolumeChanged;
+                internetRadioConsumer.PresetsChanged += InternetRadioConsumer_PresetsChanged;
+
+                this.internetRadioConsumer.CurrentlyPlayingChanged += InternetRadioConsumer_CurrentlyPlayingChanged;
+                await this.populateCurrentlyPlaying();
+                await this.populatePresetList();
+
+            }
+        }
+
+        private async void InternetRadioConsumer_CurrentlyPlayingChanged(InternetRadioConsumer sender, object args)
+        {
+            await this.populateCurrentlyPlaying();
+        }
+
+        private async Task populateCurrentlyPlaying()
+        {
+            var currentlyPlaying = await this.internetRadioConsumer.GetCurrentlyPlayingAsync();
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                this.CurrentlyPlaying.Text = currentlyPlaying.CurrentlyPlaying;
+            });
+        }
+
+        private async void InternetRadioConsumer_PresetsChanged(InternetRadioConsumer sender, object args)
+        {
+            await this.populatePresetList();
+        }
+
+        private async void InternetRadioConsumer_VolumeChanged(InternetRadioConsumer sender, object args)
+        {
+            var volume = await internetRadioConsumer.GetVolumeAsync();
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => 
+            {
+                this.VolumeSlider.Value = (volume.Volume * 100);
+            });
+        }
+
+        private async Task populatePresetList()
+        {
+            this.PresetsList.Items.Clear();
+            var presetsresult = await internetRadioConsumer.GetPresetsAsync();
+            var remotePresets = XElement.Parse(presetsresult.Presets);
+
+            foreach (var preset in remotePresets.Descendants("Track"))
+            {
+                var name = preset.Descendants("Name").First().Value;
+                this.PresetsList.Items.Add(name);
+            }
+        }
+
+        private async void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            await internetRadioConsumer.SetVolumeAsync(e.NewValue / 100);
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-             await App.ConnectionHandler.SendMessage("Nex");
+            await internetRadioConsumer.NextPresetAsync();
         }
 
         private async void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            await App.ConnectionHandler.SendMessage("Pre");
-        }
-
-        private async void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            await App.ConnectionHandler.SendMessage("Vup");
-        }
-
-        private async void Button_Click_4(object sender, RoutedEventArgs e)
-        {
-            await App.ConnectionHandler.SendMessage("Vdn");
+            await internetRadioConsumer.PreviousPresetAsync();
         }
 
         private async void Button_Click_5(object sender, RoutedEventArgs e)
         {
-            await App.ConnectionHandler.SendMessage("Add" + PresetName.Text + ";" + PresetAddress.Text);
+            var repsonse = await internetRadioConsumer.AddPresetAsync(PresetName.Text, PresetAddress.Text);
+
             PresetName.Text = "";
             PresetAddress.Text = "";
-            PresetName.PlaceholderText = "Name";
-            PresetAddress.PlaceholderText = "Address";
-            var dialog = new MessageDialog("Preset Added");
-            await dialog.ShowAsync();
+
+            if (repsonse.Status == 0)
+            {
+                var dialog = new MessageDialog("Preset Added");
+                await dialog.ShowAsync();
+            }
+            else
+            {
+                var dialog = new MessageDialog("Failed to add preset");
+                await dialog.ShowAsync();
+            }
         }
 
         private async void Button_Click_6(object sender, RoutedEventArgs e)
         {
-            await App.ConnectionHandler.SendMessage("Pwr");
+            var power = await internetRadioConsumer.GetPowerAsync();
+            await internetRadioConsumer.SetPowerAsync(power.Power);
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedPreset = this.PresetsList.SelectedItem as string;
+            if (null != selectedPreset)
+            {
+                await this.internetRadioConsumer.PlayPresetAsync(selectedPreset);
+            }
+        }
+
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            var selectedPreset = this.PresetsList.SelectedItem as string;
+            if (null != selectedPreset)
+            {
+                await this.internetRadioConsumer.RemovePresetAsync(selectedPreset);
+            }
         }
     }
 }
