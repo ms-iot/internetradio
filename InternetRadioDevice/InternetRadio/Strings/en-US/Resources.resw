@@ -117,11 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AllJoynIdMessage" xml:space="preserve">
+    <value>AllJoyn Device ID: </value>
+  </data>
+  <data name="BootingMessage" xml:space="preserve">
+    <value>Booting...</value>
+  </data>
+  <data name="ConnectionFailedMessage" xml:space="preserve">
+    <value>Connection Failed:</value>
+  </data>
+  <data name="DeviceName" xml:space="preserve">
+    <value>Internet Radio</value>
+  </data>
+  <data name="Manufacturer" xml:space="preserve">
+    <value>Microsoft Corporation</value>
+  </data>
   <data name="MediaErrorMessage" xml:space="preserve">
     <value>Media Error: </value>
   </data>
   <data name="MediaLoadingMessage" xml:space="preserve">
     <value>Loading Media:</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value />
   </data>
   <data name="NowPlayingMessage" xml:space="preserve">
     <value>Now Playing:</value>

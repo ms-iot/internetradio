@@ -29,7 +29,7 @@ namespace InternetRadio
             }
             set
             {
-                if (value >= 0 && value <= 100)
+                if (value >= 0 && value <= 1)
                 {
                     this.mediaEngine.Volume = value;
                     this.VolumeChanged(this, new VolumeChangedEventArgs() { Volume = value });

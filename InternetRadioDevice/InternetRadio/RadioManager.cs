@@ -20,32 +20,20 @@ namespace InternetRadio
         private ResourceLoader resourceLoader;
 
         private AllJoynInterfaceManager allJoynInterfaceManager;
-        private InternetRadioProducer internetRadioProducer;
         private GpioInterfaceManager gpioInterfaceManager;
         private AppServicesInterfaceManager appServicesInterfaceManager;
 
+        private uint playbackRetries;
+        private const uint maxRetries = 3;
+
         public async Task Initialize()
         {
+            this.playbackRetries = 0;
+
             var telemetryInitializeProperties = new Dictionary<string, string>();
 #pragma warning disable CS0618 // No current view for Background task
             this.resourceLoader = new ResourceLoader("Resources");
-#pragma warning restore CS0618 // No current view for Background task
-            var displays = await TextDisplay.TextDisplayManager.GetDisplays();
-            this.display = displays.FirstOrDefault();
-            if (null != this.display)
-            {
-                await this.display.InitializeAsync();
-                telemetryInitializeProperties.Add("DisplayAvailable", true.ToString());
-                telemetryInitializeProperties.Add("DisplayHeight", this.display.Height.ToString());
-                telemetryInitializeProperties.Add("DisplayWidth", this.display.Width.ToString());
-            }
-            else
-            {
-                Debug.WriteLine("RadioManager: No displays available");
-                telemetryInitializeProperties.Add("DisplayAvailable", false.ToString());
-            }
-
-            await this.display.WriteMessageAsync("Booting...", 0);
+#pragma warning restore CS0618 // No current view for Background task           
 
             this.radioPowerManager = new RadioPowerManager();
             this.radioPowerManager.PowerStateChanged += RadioPowerManager_PowerStateChanged;
@@ -60,20 +48,21 @@ namespace InternetRadio
             await this.radioPlaybackManager.InitialzeAsync();
 
             // Initialize the input managers
-            AllJoynBusAttachment radioAlljoynBusAttachment = new AllJoynBusAttachment();
-            internetRadioProducer = new InternetRadioProducer(radioAlljoynBusAttachment);
-            radioAlljoynBusAttachment.AboutData.DefaultAppName = "Internet Radio";
-            radioAlljoynBusAttachment.AboutData.DefaultDescription = "Internet Radio Device";
-            radioAlljoynBusAttachment.AboutData.DefaultManufacturer = "Microsoft Corporation";
-            radioAlljoynBusAttachment.AboutData.IsEnabled = true;
-            allJoynInterfaceManager = new AllJoynInterfaceManager(internetRadioProducer, this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
-            internetRadioProducer.Service = allJoynInterfaceManager;
-            internetRadioProducer.Start();
-
-            await this.display.WriteMessageAsync("AllJoyn Device ID:\n" + radioAlljoynBusAttachment.UniqueName,0);
+            allJoynInterfaceManager = new AllJoynInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
+            this.allJoynInterfaceManager.Initialize();
+            
+            await this.tryWriteToDisplay(this.resourceLoader.GetString("AllJoynIdMessage") +"\n" + this.allJoynInterfaceManager.GetBusId(), 0);
 
             this.gpioInterfaceManager = new GpioInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
-            this.gpioInterfaceManager.Initialize();
+            if (!this.gpioInterfaceManager.Initialize())
+            {
+                Debug.WriteLine("RadioManager: Failed to initialize GPIO");
+                telemetryInitializeProperties.Add("GpioAvailable", false.ToString());
+            }
+            else
+            {
+                telemetryInitializeProperties.Add("GpioAvailable", true.ToString());
+            }
 
             this.appServicesInterfaceManager = new AppServicesInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
 
@@ -83,16 +72,32 @@ namespace InternetRadio
             if (previousPlaylist.HasValue)
             {
                 await this.radioPresetManager.LoadPlayList(previousPlaylist.Value);
-                if (this.radioPresetManager.CurrentPlaylist == null)
-                {
-                    var newPlaylistId = await this.radioPresetManager.StartNewPlaylist("DefaultPlaylist", new List<Track>(), true);
-                    this.savePlaylistId(newPlaylistId);
-                }
+                telemetryInitializeProperties.Add("FirstBoot", false.ToString());
             }
             else
             {
+                telemetryInitializeProperties.Add("FirstBoot", true.ToString());
+            }
+
+            if (this.radioPresetManager.CurrentPlaylist == null)
+            {
                 var newPlaylistId = await this.radioPresetManager.StartNewPlaylist("DefaultPlaylist", new List<Track>(), true);
                 this.savePlaylistId(newPlaylistId);
+            }
+
+            var displays = await TextDisplay.TextDisplayManager.GetDisplays();
+            this.display = displays.FirstOrDefault();
+            if (null != this.display)
+            {
+                await this.display.InitializeAsync();
+                telemetryInitializeProperties.Add("DisplayAvailable", true.ToString());
+                telemetryInitializeProperties.Add("DisplayHeight", this.display.Height.ToString());
+                telemetryInitializeProperties.Add("DisplayWidth", this.display.Width.ToString());
+            }
+            else
+            {
+                Debug.WriteLine("RadioManager: No displays available");
+                telemetryInitializeProperties.Add("DisplayAvailable", false.ToString());
             }
 
             // Wake up the radio
@@ -112,7 +117,7 @@ namespace InternetRadio
             {
                 case PowerState.Powered:
 
-                    await this.display.WriteMessageAsync(this.resourceLoader.GetString("StartupMessageLine1") + 
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("StartupMessageLine1") + 
                                                         "\n" + 
                                                         this.resourceLoader.GetString("StartupMessageLine2"), 
                                                         0);
@@ -124,10 +129,10 @@ namespace InternetRadio
                     }
                     break;
                 case PowerState.Standby:
-                    await this.display.WriteMessageAsync(this.resourceLoader.GetString("ShutdownMessage"), 0);
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("ShutdownMessage"), 0);
                     this.radioPlaybackManager.Pause();
                     await Task.Delay(Config.Messages_StartupMessageDelay);
-                    await this.display.WriteMessageAsync(String.Empty + "\n" + String.Empty, 0);
+                    await this.tryWriteToDisplay(String.Empty + "\n" + String.Empty, 0);
                     break;
             }
         }
@@ -137,23 +142,34 @@ namespace InternetRadio
             switch(e.State)
             {
                 case PlaybackState.Error_MediaInvalid:
-                    await this.display.WriteMessageAsync(this.resourceLoader.GetString("MediaErrorMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("MediaErrorMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
                     break;
 
                 case PlaybackState.Loading:
-                    await this.display.WriteMessageAsync(this.resourceLoader.GetString("MediaLoadingMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("MediaLoadingMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
                     break;
 
                 case PlaybackState.Playing:
-                    await this.display.WriteMessageAsync(this.resourceLoader.GetString("NowPlayingMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
+                    playbackRetries = 0;
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("NowPlayingMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
                     break;
+                case PlaybackState.Ended:
+                    if (maxRetries > playbackRetries)
+                    {
+                        playChannel(this.radioPresetManager.CurrentTrack);
+                    }
+                    else
+                    {
+                        await this.tryWriteToDisplay(this.resourceLoader.GetString("ConnectionFailedMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
+                    }
 
+                    break;
             }
         }
 
         private async void RadioPlaybackManager_VolumeChanged(object sender, VolumeChangedEventArgs e)
         {
-            await this.display.WriteMessageAsync(this.resourceLoader.GetString("VolumeMesage") + "\n" + ((int)(e.Volume * 100)).ToString() + "%", 3);
+            await this.tryWriteToDisplay(this.resourceLoader.GetString("VolumeMesage") + "\n" + ((int)(e.Volume * 100)).ToString() + "%", 3);
         }
 
         private void RadioPresetManager_CurrentTrackChanged(object sender, PlaylistCurrentTrackChangedEventArgs e)
@@ -161,20 +177,30 @@ namespace InternetRadio
             playChannel(e.CurrentTrack);
         }
 
-        private async void RadioPresetManager_PlaylistChanged(object sender, PlaylistChangedEventArgs e)
+        private void RadioPresetManager_PlaylistChanged(object sender, PlaylistChangedEventArgs e)
         {
-            await this.display.WriteMessageAsync(this.resourceLoader.GetString("PlaylistLoadedMessage") + "\n" + e.Playlist.Name, 3);
         }
 
         public async Task Dispose()
         {
-            await this.display.DisposeAsync();
+            if (null != this.display)
+                await this.display.DisposeAsync();
         }
 
-        private void playChannel(Track channel)
+        private void playChannel(Track track)
         {
-            Debug.WriteLine("Play Channel: " + channel.Name);
-            this.radioPlaybackManager.Play(new Uri(channel.Address));
+            Debug.WriteLine("RadioManager: Play Track - " + track.Name);
+            this.radioPlaybackManager.Play(new Uri(track.Address));
+        }
+
+        private async Task tryWriteToDisplay(string message, uint timeout)
+        {
+            if (null != this.display)
+            {
+                await this.display.WriteMessageAsync(message, timeout);
+            }
+
+            Debug.WriteLine("RadioManager: Display - " + message);
         }
 
         private void saveVolume(double volume)

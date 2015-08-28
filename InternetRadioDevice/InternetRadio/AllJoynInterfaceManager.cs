@@ -15,20 +15,38 @@ namespace InternetRadio
 {
     internal class AllJoynInterfaceManager : IInternetRadioService
     {
+        private AllJoynBusAttachment allJoynBusAttachment;
         private InternetRadioProducer producer;
         private IPlaylistManager playlistManager;
         private IPlaybackManager playbackManager;
         private IDevicePowerManager powerManager;
 
-        internal AllJoynInterfaceManager(InternetRadioProducer producer, IPlaybackManager playbackManager, IPlaylistManager playlistManager, IDevicePowerManager powerManager)
+        internal AllJoynInterfaceManager(IPlaybackManager playbackManager, IPlaylistManager playlistManager, IDevicePowerManager powerManager)
         {
-            this.producer = producer;
             this.playbackManager = playbackManager;
             this.playbackManager.VolumeChanged += PlaybackManager_VolumeChanged;
             this.playlistManager = playlistManager;
             this.playlistManager.CurrentTrackChanged += PlaylistManager_CurrentTrackChanged;
             this.powerManager = powerManager;
             this.powerManager.PowerStateChanged += PowerManager_PowerStateChanged;
+        }
+
+        internal void Initialize()
+        {
+            this.allJoynBusAttachment = new AllJoynBusAttachment();
+            this.producer = new InternetRadioProducer(this.allJoynBusAttachment);
+            this.allJoynBusAttachment.AboutData.DefaultAppName = Package.Current.DisplayName;
+            this.allJoynBusAttachment.AboutData.DefaultDescription = Package.Current.Description;
+            this.allJoynBusAttachment.AboutData.DefaultManufacturer = Package.Current.Id.Publisher;
+            this.allJoynBusAttachment.AboutData.SoftwareVersion = Package.Current.Id.Version.ToString();
+            this.allJoynBusAttachment.AboutData.IsEnabled = true;
+            this.producer.Service = this;
+            this.producer.Start();
+        }
+
+        internal string GetBusId()
+        {
+            return this.allJoynBusAttachment.UniqueName;
         }
 
         private void PowerManager_PowerStateChanged(object sender, PowerStateChangedEventArgs e)
@@ -178,14 +196,8 @@ namespace InternetRadio
             return Task.Run(() =>
             {
                 StartupTask.WriteTelemetryEvent("Action_AllJoyn");
-                if (PowerState.Powered == this.powerManager.PowerState)
-                {
-                    this.powerManager.PowerState = PowerState.Standby;
-                }
-                else
-                {
-                    this.powerManager.PowerState = PowerState.Powered;
-                }
+                this.powerManager.PowerState = (false) ?  PowerState.Standby : PowerState.Powered;
+
                 return InternetRadioSetPowerResult.CreateSuccessResult();
             }).AsAsyncOperation();
         }

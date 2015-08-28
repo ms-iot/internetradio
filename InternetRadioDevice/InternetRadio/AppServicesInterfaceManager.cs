@@ -25,14 +25,6 @@ namespace InternetRadio
         public async Task HandleDeferral(AppServiceDeferral deferral, AppServiceRequest request)
         {
             StartupTask.WriteTelemetryEvent("Action_AppService");
-            if (this.powerManager.PowerState == PowerState.Powered)
-            {
-                this.powerManager.PowerState = PowerState.Standby;
-            }
-            else
-            {
-                this.powerManager.PowerState = PowerState.Powered;
-            }
 
             ValueSet returnMessage = new ValueSet();
             await request.SendResponseAsync(returnMessage);

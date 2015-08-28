@@ -35,10 +35,16 @@ namespace InternetRadio
             this.powerManager = powerManager;
         }
 
-        public void Initialize()
+        public bool Initialize()
         {
             actionButtons = new Dictionary<InputAction, GpioPin>();
             var gpio = GpioController.GetDefault();
+
+            if (null == gpio)
+            {
+                Debug.WriteLine("GpioInterfaceManager: No GPIO controller found");
+                return false;
+            }
 
             foreach (var pinSetting in Config.Buttons_Pins)
             {
@@ -61,6 +67,8 @@ namespace InternetRadio
 
                 Debug.WriteLine("Error: Button on pin " + pinSetting.Value + " was unable to be bound because: " + status.ToString());
             }
+
+            return true;
         }
 
         private void handleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
@@ -81,7 +89,7 @@ namespace InternetRadio
                         this.playbackManager.Volume += 0.1;
                         break;
                     case InputAction.VolumeDown:
-                        this.playbackManager.Volume += -0.1;
+                        this.playbackManager.Volume -= 0.1;
                         break;
                     case InputAction.Sleep:
                         if (PowerState.Powered == this.powerManager.PowerState)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -92,7 +93,13 @@ namespace InternetRadio
 
         public bool PlayTrack(string trackName)
         {
-            throw new NotImplementedException();
+            var track = this.playlist.Tracks.FirstOrDefault(t => t.Name == trackName);
+            if (track != null)
+            {
+                this.currentPreset = this.playlist.Tracks.IndexOf(track);
+                this.CurrentTrackChanged(this, new PlaylistCurrentTrackChangedEventArgs() { CurrentTrack = this.CurrentTrack });
+            }
+            return false;
         }
 
         public Track NextTrack()

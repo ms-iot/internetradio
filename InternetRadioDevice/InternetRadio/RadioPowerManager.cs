@@ -28,9 +28,6 @@ namespace InternetRadio
 
         public event PowerStateChangedEventHandler PowerStateChanged;
 
-        public bool CanPerformActions()
-        {
-            return this.PowerState == PowerState.Powered;
-        }
+        public bool CanPerformActions() => this.PowerState == PowerState.Powered;
     }
 }

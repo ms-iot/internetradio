@@ -142,7 +142,7 @@ namespace InternetRadioController
         private async void Button_Click_6(object sender, RoutedEventArgs e)
         {
             var power = await internetRadioConsumer.GetPowerAsync();
-            await internetRadioConsumer.SetPowerAsync(power.Power);
+            await internetRadioConsumer.SetPowerAsync(!power.Power);
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
