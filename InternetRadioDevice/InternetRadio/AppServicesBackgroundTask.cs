@@ -45,8 +45,6 @@ namespace InternetRadio
             }
 
             await StartupTask.s_radioManager.GetAppServicesInterfaceManager().HandleDeferral(args.GetDeferral(), args.Request);
-
-            //args.Request.SendResponseAsync()
         }
     }
 }
