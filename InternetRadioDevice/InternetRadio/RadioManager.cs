@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using TextDisplay;
-using com.microsoft.maker.InternetRadio;
-using Windows.Devices.AllJoyn;
 using System.Collections.Generic;
 using Windows.ApplicationModel.Resources;
 
@@ -85,11 +82,10 @@ namespace InternetRadio
                 this.savePlaylistId(newPlaylistId);
             }
 
-            var displays = await TextDisplay.TextDisplayManager.GetDisplays();
+            var displays = await TextDisplayManager.GetDisplays();
             this.display = displays.FirstOrDefault();
             if (null != this.display)
             {
-                await this.display.InitializeAsync();
                 telemetryInitializeProperties.Add("DisplayAvailable", true.ToString());
                 telemetryInitializeProperties.Add("DisplayHeight", this.display.Height.ToString());
                 telemetryInitializeProperties.Add("DisplayWidth", this.display.Width.ToString());

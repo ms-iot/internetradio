@@ -64,7 +64,7 @@ namespace InternetRadio
             }
             else
             {
-                Debug.WriteLine("Playlist was null");
+                Debug.WriteLine("RadioLocalPresetManager: Playlist "+ playlistId.ToString() + " was not avaliable");
             }
         }
 
@@ -167,7 +167,7 @@ namespace InternetRadio
             }
             catch(FileNotFoundException)
             {
-                Debug.WriteLine("RadioLocalPresetManager: Playlist file not found");
+                Debug.WriteLine("RadioLocalPresetManager: Playlist file not found - " + fileName);
             }
 
             return playlist;
