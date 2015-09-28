@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="9f53b3b7-86e8-45e2-94b3-391d9957c3f7" Publisher="CN=bethoma" Version="1.0.0.0" />
+  <Identity Name="InternetRadioController" Publisher="CN=bethoma" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="9f53b3b7-86e8-45e2-94b3-391d9957c3f7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>InternetRadioController</DisplayName>
-    <PublisherDisplayName>bethoma</PublisherDisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

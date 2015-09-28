@@ -140,16 +140,14 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="TextDisplay, Version=1.0.0.0, Culture=neutral, processorArchitecture=ARM">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\ARM\TextDisplay.winmd</HintPath>
-    </Reference>
-    <Reference Include="UniversalMediaEngine, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>References\ARM\UniversalMediaEngine.winmd</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\lib\TextDisplay\TextDisplayManager\TextDisplay.csproj">
+      <Project>{060399d9-871d-4a17-a249-a12b9d3f7682}</Project>
+      <Name>TextDisplay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\UniversalMediaEngine\UniversalMediaEngine\UniversalMediaEngine.vcxproj">
+      <Project>{81d46002-ec95-4423-bf6e-dbe82ccd55ca}</Project>
+      <Name>UniversalMediaEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj">
       <Project>{49460e79-e4ec-40cd-a0c9-02475b990d22}</Project>
       <Name>InternetRadioAllJoyn</Name>
