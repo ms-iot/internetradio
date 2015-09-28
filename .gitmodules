@@ -1,0 +1,6 @@
+[submodule "lib/UniversalMediaEngine"]
+	path = lib/UniversalMediaEngine
+	url = https://github.com/ms-iot/UniversalMediaEngine
+[submodule "lib/TextDisplay"]
+	path = lib/TextDisplay
+	url = https://github.com/ms-iot/TextDisplay
