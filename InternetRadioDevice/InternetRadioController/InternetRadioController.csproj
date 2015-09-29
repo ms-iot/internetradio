@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj">
-      <Project>{49460e79-e4ec-40cd-a0c9-02475b990d22}</Project>
+      <Project>{5daf0d4c-ef4f-4e20-8877-db2aaeb89bbd}</Project>
       <Name>InternetRadioAllJoyn</Name>
     </ProjectReference>
   </ItemGroup>

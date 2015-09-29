@@ -66,17 +66,17 @@ public:
     // This event will fire whenever a member leaves the session.
     virtual event Windows::Foundation::TypedEventHandler<InternetRadioProducer^, Windows::Devices::AllJoyn::AllJoynSessionMemberRemovedEventArgs^>^ SessionMemberRemoved;
 
-    // Send a signal to all members of the session to notify them that the value of Volume has changed.
-    void EmitVolumeChanged();
-
     // Send a signal to all members of the session to notify them that the value of CurrentlyPlaying has changed.
     void EmitCurrentlyPlayingChanged();
+
+    // Send a signal to all members of the session to notify them that the value of Power has changed.
+    void EmitPowerChanged();
 
     // Send a signal to all members of the session to notify them that the value of Presets has changed.
     void EmitPresetsChanged();
 
-    // Send a signal to all members of the session to notify them that the value of Power has changed.
-    void EmitPowerChanged();
+    // Send a signal to all members of the session to notify them that the value of Volume has changed.
+    void EmitVolumeChanged();
 
     // Start advertising the service.
     void Start();
@@ -138,11 +138,11 @@ internal:
     void BusAttachmentStateChanged(_In_ Windows::Devices::AllJoyn::AllJoynBusAttachment^ sender, _In_ Windows::Devices::AllJoyn::AllJoynBusAttachmentStateChangedEventArgs^ args);
 
 private:
-    static void CallNextPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
-    static void CallPreviousPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
     static void CallAddPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
-    static void CallRemovePresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
+    static void CallNextPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
     static void CallPlayPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
+    static void CallPreviousPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
+    static void CallRemovePresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message);
       
     // Register a callback function to handle methods.
     QStatus AddMethodHandler(_In_ alljoyn_interfacedescription interfaceDescription, _In_ PCSTR methodName, _In_ alljoyn_messagereceiver_methodhandler_ptr handler);

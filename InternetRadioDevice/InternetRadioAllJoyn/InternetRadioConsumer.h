@@ -28,10 +28,10 @@ public interface class IInternetRadioConsumer
     event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Windows::Devices::AllJoyn::AllJoynSessionLostEventArgs^>^ SessionLost;
     event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Windows::Devices::AllJoyn::AllJoynSessionMemberAddedEventArgs^>^ SessionMemberAdded;
     event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Windows::Devices::AllJoyn::AllJoynSessionMemberRemovedEventArgs^>^ SessionMemberRemoved;
-    event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ VolumeChanged;
     event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ CurrentlyPlayingChanged;
-    event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PresetsChanged;
     event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PowerChanged;
+    event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PresetsChanged;
+    event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ VolumeChanged;
 };
 
 public ref class InternetRadioConsumer sealed  : [Windows::Foundation::Metadata::Default] IInternetRadioConsumer
@@ -46,16 +46,36 @@ public:
     // in the Added callback on the Watcher.
     static Windows::Foundation::IAsyncOperation<InternetRadioJoinSessionResult^>^ JoinSessionAsync(_In_ Windows::Devices::AllJoyn::AllJoynServiceInfo^ serviceInfo, _Inout_ InternetRadioWatcher^ watcher);
 
-    // Call the NextPreset method
-    Windows::Foundation::IAsyncOperation<InternetRadioNextPresetResult^>^ NextPresetAsync();
-    // Call the PreviousPreset method
-    Windows::Foundation::IAsyncOperation<InternetRadioPreviousPresetResult^>^ PreviousPresetAsync();
     // Call the AddPreset method
     Windows::Foundation::IAsyncOperation<InternetRadioAddPresetResult^>^ AddPresetAsync(_In_ Platform::String^ interfaceMemberPresetName, _In_ Platform::String^ interfaceMemberPresetAddress);
-    // Call the RemovePreset method
-    Windows::Foundation::IAsyncOperation<InternetRadioRemovePresetResult^>^ RemovePresetAsync(_In_ Platform::String^ interfaceMemberPresetName);
+    // Call the NextPreset method
+    Windows::Foundation::IAsyncOperation<InternetRadioNextPresetResult^>^ NextPresetAsync();
     // Call the PlayPreset method
     Windows::Foundation::IAsyncOperation<InternetRadioPlayPresetResult^>^ PlayPresetAsync(_In_ Platform::String^ interfaceMemberPresetName);
+    // Call the PreviousPreset method
+    Windows::Foundation::IAsyncOperation<InternetRadioPreviousPresetResult^>^ PreviousPresetAsync();
+    // Call the RemovePreset method
+    Windows::Foundation::IAsyncOperation<InternetRadioRemovePresetResult^>^ RemovePresetAsync(_In_ Platform::String^ interfaceMemberPresetName);
+    // This event fires whenever the value of CurrentlyPlaying changes.
+    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ CurrentlyPlayingChanged;
+    
+    // Get the value of the CurrentlyPlaying property.
+    Windows::Foundation::IAsyncOperation<InternetRadioGetCurrentlyPlayingResult^>^ GetCurrentlyPlayingAsync();
+
+    // This event fires whenever the value of Power changes.
+    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PowerChanged;
+    
+    // Get the value of the Power property.
+    Windows::Foundation::IAsyncOperation<InternetRadioGetPowerResult^>^ GetPowerAsync();
+
+    // Set the value of the Power property.
+    Windows::Foundation::IAsyncOperation<InternetRadioSetPowerResult^>^ SetPowerAsync(_In_ bool value);
+    // This event fires whenever the value of Presets changes.
+    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PresetsChanged;
+    
+    // Get the value of the Presets property.
+    Windows::Foundation::IAsyncOperation<InternetRadioGetPresetsResult^>^ GetPresetsAsync();
+
     // Get the value of the Version property.
     Windows::Foundation::IAsyncOperation<InternetRadioGetVersionResult^>^ GetVersionAsync();
 
@@ -67,26 +87,6 @@ public:
 
     // Set the value of the Volume property.
     Windows::Foundation::IAsyncOperation<InternetRadioSetVolumeResult^>^ SetVolumeAsync(_In_ double value);
-    // This event fires whenever the value of CurrentlyPlaying changes.
-    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ CurrentlyPlayingChanged;
-    
-    // Get the value of the CurrentlyPlaying property.
-    Windows::Foundation::IAsyncOperation<InternetRadioGetCurrentlyPlayingResult^>^ GetCurrentlyPlayingAsync();
-
-    // This event fires whenever the value of Presets changes.
-    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PresetsChanged;
-    
-    // Get the value of the Presets property.
-    Windows::Foundation::IAsyncOperation<InternetRadioGetPresetsResult^>^ GetPresetsAsync();
-
-    // This event fires whenever the value of Power changes.
-    virtual event Windows::Foundation::TypedEventHandler<InternetRadioConsumer^, Platform::Object^>^ PowerChanged;
-    
-    // Get the value of the Power property.
-    Windows::Foundation::IAsyncOperation<InternetRadioGetPowerResult^>^ GetPowerAsync();
-
-    // Set the value of the Power property.
-    Windows::Foundation::IAsyncOperation<InternetRadioSetPowerResult^>^ SetPowerAsync(_In_ bool value);
 
     // Used to send signals or register functions to handle received signals.
     property InternetRadioSignals^ Signals

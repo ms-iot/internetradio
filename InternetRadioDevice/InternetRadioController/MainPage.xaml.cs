@@ -28,6 +28,9 @@ namespace InternetRadioController
         private ObservableCollection<InternetRadioDeviceRegistrationInfo> devices;
 
         private InternetRadioWatcher radioWatcher;
+
+        private AllJoynBusAttachment alljoynBusAttachment;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -35,8 +38,10 @@ namespace InternetRadioController
             devices = new ObservableCollection<InternetRadioDeviceRegistrationInfo>();
             this.AvailableRadios.ItemsSource = devices;
 
-            var alljoynBusAttachment = new AllJoynBusAttachment();
+            alljoynBusAttachment = new AllJoynBusAttachment();
+            
             radioWatcher = new InternetRadioWatcher(alljoynBusAttachment);
+            
             radioWatcher.Added += RadioWatcher_Added;
             radioWatcher.Start();
         }
@@ -44,12 +49,14 @@ namespace InternetRadioController
         private async void RadioWatcher_Added(InternetRadioWatcher sender, AllJoynServiceInfo args)
         {
             Debug.WriteLine(args.UniqueName);
+
+            var about = await AllJoynAboutDataView.GetDataBySessionPortAsync(args.UniqueName, alljoynBusAttachment, args.SessionPort);
             
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, (() =>
              {
                  devices.Add(new InternetRadioDeviceRegistrationInfo()
                  {
-                     Name = args.UniqueName,
+                     Name = string.Format("{0} ({1})", about.AppName, about.DeviceName),
                      sender = sender,
                      args = args
                  });

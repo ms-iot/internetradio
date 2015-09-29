@@ -156,9 +156,8 @@ void AllJoynHelpers::DispatchEvent(std::function<void()> callback)
 {
     // Obtain a reference to the application's CoreDispatcher which allows 
     // us to run code on its UI thread, then run the provided callback.
-    //CoreDispatcher^ uiDispatcher = Windows::ApplicationModel::Core::CoreApplication::MainView->CoreWindow->Dispatcher;
-    //create_task([=]() {
-    //    return uiDispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler(callback));
-    //}).wait();
-	callback();
+    CoreDispatcher^ uiDispatcher = Windows::ApplicationModel::Core::CoreApplication::MainView->CoreWindow->Dispatcher;
+    create_task([=]() {
+        return uiDispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler(callback));
+    }).wait();
 }

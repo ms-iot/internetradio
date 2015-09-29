@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{49460e79-e4ec-40cd-a0c9-02475b990d22}</ProjectGuid>
+    <ProjectGuid>{5daf0d4c-ef4f-4e20-8877-db2aaeb89bbd}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>
     <ProjectName>InternetRadioAllJoyn</ProjectName>
     <RootNamespace>com.microsoft.maker.InternetRadio</RootNamespace>

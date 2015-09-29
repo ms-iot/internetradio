@@ -25,64 +25,6 @@ namespace com { namespace microsoft { namespace maker { namespace InternetRadio 
 
 ref class InternetRadioConsumer;
 
-public ref class InternetRadioNextPresetResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    
-    static InternetRadioNextPresetResult^ CreateSuccessResult()
-    {
-        auto result = ref new InternetRadioNextPresetResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        return result;
-    }
-    
-    static InternetRadioNextPresetResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioNextPresetResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-};
-
-public ref class InternetRadioPreviousPresetResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    
-    static InternetRadioPreviousPresetResult^ CreateSuccessResult()
-    {
-        auto result = ref new InternetRadioPreviousPresetResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        return result;
-    }
-    
-    static InternetRadioPreviousPresetResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioPreviousPresetResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-};
-
 public ref class InternetRadioAddPresetResult sealed
 {
 public:
@@ -112,7 +54,7 @@ private:
     int32 m_status;
 };
 
-public ref class InternetRadioRemovePresetResult sealed
+public ref class InternetRadioNextPresetResult sealed
 {
 public:
     property int32 Status
@@ -123,16 +65,16 @@ public:
     }
 
     
-    static InternetRadioRemovePresetResult^ CreateSuccessResult()
+    static InternetRadioNextPresetResult^ CreateSuccessResult()
     {
-        auto result = ref new InternetRadioRemovePresetResult();
+        auto result = ref new InternetRadioNextPresetResult();
         result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
         return result;
     }
     
-    static InternetRadioRemovePresetResult^ CreateFailureResult(_In_ int32 status)
+    static InternetRadioNextPresetResult^ CreateFailureResult(_In_ int32 status)
     {
-        auto result = ref new InternetRadioRemovePresetResult();
+        auto result = ref new InternetRadioNextPresetResult();
         result->Status = status;
         return result;
     }
@@ -170,6 +112,64 @@ private:
     int32 m_status;
 };
 
+public ref class InternetRadioPreviousPresetResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    
+    static InternetRadioPreviousPresetResult^ CreateSuccessResult()
+    {
+        auto result = ref new InternetRadioPreviousPresetResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        return result;
+    }
+    
+    static InternetRadioPreviousPresetResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioPreviousPresetResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+};
+
+public ref class InternetRadioRemovePresetResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    
+    static InternetRadioRemovePresetResult^ CreateSuccessResult()
+    {
+        auto result = ref new InternetRadioRemovePresetResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        return result;
+    }
+    
+    static InternetRadioRemovePresetResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioRemovePresetResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+};
+
 public ref class InternetRadioJoinSessionResult sealed
 {
 public:
@@ -190,6 +190,145 @@ public:
 private:
     int32 m_status;
     InternetRadioConsumer^ m_consumer;
+};
+
+public ref class InternetRadioGetCurrentlyPlayingResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    property Platform::String^ CurrentlyPlaying
+    {
+        Platform::String^ get() { return m_value; }
+    internal:
+        void set(_In_ Platform::String^ value) { m_value = value; }
+    }
+
+    static InternetRadioGetCurrentlyPlayingResult^ CreateSuccessResult(_In_ Platform::String^ value)
+    {
+        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        result->CurrentlyPlaying = value;
+        return result;
+    }
+
+    static InternetRadioGetCurrentlyPlayingResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+    Platform::String^ m_value;
+};
+
+public ref class InternetRadioGetPowerResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    property bool Power
+    {
+        bool get() { return m_value; }
+    internal:
+        void set(_In_ bool value) { m_value = value; }
+    }
+
+    static InternetRadioGetPowerResult^ CreateSuccessResult(_In_ bool value)
+    {
+        auto result = ref new InternetRadioGetPowerResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        result->Power = value;
+        return result;
+    }
+
+    static InternetRadioGetPowerResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioGetPowerResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+    bool m_value;
+};
+
+public ref class InternetRadioSetPowerResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    static InternetRadioSetPowerResult^ CreateSuccessResult()
+    {
+        auto result = ref new InternetRadioSetPowerResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        return result;
+    }
+
+    static InternetRadioSetPowerResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioSetPowerResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+};
+
+public ref class InternetRadioGetPresetsResult sealed
+{
+public:
+    property int32 Status
+    {
+        int32 get() { return m_status; }
+    internal:
+        void set(_In_ int32 value) { m_status = value; }
+    }
+
+    property Platform::String^ Presets
+    {
+        Platform::String^ get() { return m_value; }
+    internal:
+        void set(_In_ Platform::String^ value) { m_value = value; }
+    }
+
+    static InternetRadioGetPresetsResult^ CreateSuccessResult(_In_ Platform::String^ value)
+    {
+        auto result = ref new InternetRadioGetPresetsResult();
+        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
+        result->Presets = value;
+        return result;
+    }
+
+    static InternetRadioGetPresetsResult^ CreateFailureResult(_In_ int32 status)
+    {
+        auto result = ref new InternetRadioGetPresetsResult();
+        result->Status = status;
+        return result;
+    }
+
+private:
+    int32 m_status;
+    Platform::String^ m_value;
 };
 
 public ref class InternetRadioGetVersionResult sealed
@@ -286,145 +425,6 @@ public:
     static InternetRadioSetVolumeResult^ CreateFailureResult(_In_ int32 status)
     {
         auto result = ref new InternetRadioSetVolumeResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-};
-
-public ref class InternetRadioGetCurrentlyPlayingResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    property Platform::String^ CurrentlyPlaying
-    {
-        Platform::String^ get() { return m_value; }
-    internal:
-        void set(_In_ Platform::String^ value) { m_value = value; }
-    }
-
-    static InternetRadioGetCurrentlyPlayingResult^ CreateSuccessResult(_In_ Platform::String^ value)
-    {
-        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        result->CurrentlyPlaying = value;
-        return result;
-    }
-
-    static InternetRadioGetCurrentlyPlayingResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-    Platform::String^ m_value;
-};
-
-public ref class InternetRadioGetPresetsResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    property Platform::String^ Presets
-    {
-        Platform::String^ get() { return m_value; }
-    internal:
-        void set(_In_ Platform::String^ value) { m_value = value; }
-    }
-
-    static InternetRadioGetPresetsResult^ CreateSuccessResult(_In_ Platform::String^ value)
-    {
-        auto result = ref new InternetRadioGetPresetsResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        result->Presets = value;
-        return result;
-    }
-
-    static InternetRadioGetPresetsResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioGetPresetsResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-    Platform::String^ m_value;
-};
-
-public ref class InternetRadioGetPowerResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    property bool Power
-    {
-        bool get() { return m_value; }
-    internal:
-        void set(_In_ bool value) { m_value = value; }
-    }
-
-    static InternetRadioGetPowerResult^ CreateSuccessResult(_In_ bool value)
-    {
-        auto result = ref new InternetRadioGetPowerResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        result->Power = value;
-        return result;
-    }
-
-    static InternetRadioGetPowerResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioGetPowerResult();
-        result->Status = status;
-        return result;
-    }
-
-private:
-    int32 m_status;
-    bool m_value;
-};
-
-public ref class InternetRadioSetPowerResult sealed
-{
-public:
-    property int32 Status
-    {
-        int32 get() { return m_status; }
-    internal:
-        void set(_In_ int32 value) { m_status = value; }
-    }
-
-    static InternetRadioSetPowerResult^ CreateSuccessResult()
-    {
-        auto result = ref new InternetRadioSetPowerResult();
-        result->Status = Windows::Devices::AllJoyn::AllJoynStatus::Ok;
-        return result;
-    }
-
-    static InternetRadioSetPowerResult^ CreateFailureResult(_In_ int32 status)
-    {
-        auto result = ref new InternetRadioSetPowerResult();
         result->Status = status;
         return result;
     }
