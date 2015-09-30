@@ -51,7 +51,13 @@ namespace InternetRadioController
             Debug.WriteLine(args.UniqueName);
 
             var about = await AllJoynAboutDataView.GetDataBySessionPortAsync(args.UniqueName, alljoynBusAttachment, args.SessionPort);
-            
+
+            if (null == about)
+            {
+                Debug.WriteLine("Unable to get AboutData for device: " + args.UniqueName);
+                return;
+            }
+
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, (() =>
              {
                  devices.Add(new InternetRadioDeviceRegistrationInfo()
