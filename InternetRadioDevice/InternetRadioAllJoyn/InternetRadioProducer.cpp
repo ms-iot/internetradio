@@ -154,86 +154,6 @@ void InternetRadioProducer::BusAttachmentStateChanged(_In_ AllJoynBusAttachment^
     }
 }
 
-void InternetRadioProducer::CallNextPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
-{
-    auto source = SourceObjects.find(busObject);
-    if (source == SourceObjects.end())
-    {
-        return;
-    }
-
-    InternetRadioProducer^ producer = source->second->Resolve<InternetRadioProducer>();
-    if (producer->Service != nullptr)
-    {
-        AllJoynMessageInfo^ callInfo = ref new AllJoynMessageInfo(AllJoynHelpers::MultibyteToPlatformString(alljoyn_message_getsender(message)));
-
-
-        create_task(producer->Service->NextPresetAsync(callInfo)).then([busObject, message](InternetRadioNextPresetResult^ result)
-        {
-            int32 status;
-
-            if (nullptr == result)
-            {
-                alljoyn_busobject_methodreply_status(busObject, message, ER_BUS_NO_LISTENER);
-                return;
-            }
-
-            status = result->Status;
-            if (AllJoynStatus::Ok != status)
-            {
-                alljoyn_busobject_methodreply_status(busObject, message, static_cast<QStatus>(status));
-                return;
-            }
-
-            size_t argCount = 0;
-            alljoyn_msgarg outputs = alljoyn_msgarg_array_create(argCount);
-
-            alljoyn_busobject_methodreply_args(busObject, message, outputs, argCount);
-            alljoyn_msgarg_destroy(outputs);
-        }).wait();
-    }
-}
-
-void InternetRadioProducer::CallPreviousPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
-{
-    auto source = SourceObjects.find(busObject);
-    if (source == SourceObjects.end())
-    {
-        return;
-    }
-
-    InternetRadioProducer^ producer = source->second->Resolve<InternetRadioProducer>();
-    if (producer->Service != nullptr)
-    {
-        AllJoynMessageInfo^ callInfo = ref new AllJoynMessageInfo(AllJoynHelpers::MultibyteToPlatformString(alljoyn_message_getsender(message)));
-
-
-        create_task(producer->Service->PreviousPresetAsync(callInfo)).then([busObject, message](InternetRadioPreviousPresetResult^ result)
-        {
-            int32 status;
-
-            if (nullptr == result)
-            {
-                alljoyn_busobject_methodreply_status(busObject, message, ER_BUS_NO_LISTENER);
-                return;
-            }
-
-            status = result->Status;
-            if (AllJoynStatus::Ok != status)
-            {
-                alljoyn_busobject_methodreply_status(busObject, message, static_cast<QStatus>(status));
-                return;
-            }
-
-            size_t argCount = 0;
-            alljoyn_msgarg outputs = alljoyn_msgarg_array_create(argCount);
-
-            alljoyn_busobject_methodreply_args(busObject, message, outputs, argCount);
-            alljoyn_msgarg_destroy(outputs);
-        }).wait();
-    }
-}
-
 void InternetRadioProducer::CallAddPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
 {
     auto source = SourceObjects.find(busObject);
@@ -278,7 +198,7 @@ void InternetRadioProducer::CallAddPresetHandler(_Inout_ alljoyn_busobject busOb
     }
 }
 
-void InternetRadioProducer::CallRemovePresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
+void InternetRadioProducer::CallNextPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
 {
     auto source = SourceObjects.find(busObject);
     if (source == SourceObjects.end())
@@ -291,10 +211,8 @@ void InternetRadioProducer::CallRemovePresetHandler(_Inout_ alljoyn_busobject bu
     {
         AllJoynMessageInfo^ callInfo = ref new AllJoynMessageInfo(AllJoynHelpers::MultibyteToPlatformString(alljoyn_message_getsender(message)));
 
-        Platform::String^ inputArg0;
-        TypeConversionHelpers::GetAllJoynMessageArg(alljoyn_message_getarg(message, 0), "s", &inputArg0);
 
-        create_task(producer->Service->RemovePresetAsync(callInfo, inputArg0)).then([busObject, message](InternetRadioRemovePresetResult^ result)
+        create_task(producer->Service->NextPresetAsync(callInfo)).then([busObject, message](InternetRadioNextPresetResult^ result)
         {
             int32 status;
 
@@ -362,6 +280,88 @@ void InternetRadioProducer::CallPlayPresetHandler(_Inout_ alljoyn_busobject busO
     }
 }
 
+void InternetRadioProducer::CallPreviousPresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
+{
+    auto source = SourceObjects.find(busObject);
+    if (source == SourceObjects.end())
+    {
+        return;
+    }
+
+    InternetRadioProducer^ producer = source->second->Resolve<InternetRadioProducer>();
+    if (producer->Service != nullptr)
+    {
+        AllJoynMessageInfo^ callInfo = ref new AllJoynMessageInfo(AllJoynHelpers::MultibyteToPlatformString(alljoyn_message_getsender(message)));
+
+
+        create_task(producer->Service->PreviousPresetAsync(callInfo)).then([busObject, message](InternetRadioPreviousPresetResult^ result)
+        {
+            int32 status;
+
+            if (nullptr == result)
+            {
+                alljoyn_busobject_methodreply_status(busObject, message, ER_BUS_NO_LISTENER);
+                return;
+            }
+
+            status = result->Status;
+            if (AllJoynStatus::Ok != status)
+            {
+                alljoyn_busobject_methodreply_status(busObject, message, static_cast<QStatus>(status));
+                return;
+            }
+
+            size_t argCount = 0;
+            alljoyn_msgarg outputs = alljoyn_msgarg_array_create(argCount);
+
+            alljoyn_busobject_methodreply_args(busObject, message, outputs, argCount);
+            alljoyn_msgarg_destroy(outputs);
+        }).wait();
+    }
+}
+
+void InternetRadioProducer::CallRemovePresetHandler(_Inout_ alljoyn_busobject busObject, _In_ alljoyn_message message)
+{
+    auto source = SourceObjects.find(busObject);
+    if (source == SourceObjects.end())
+    {
+        return;
+    }
+
+    InternetRadioProducer^ producer = source->second->Resolve<InternetRadioProducer>();
+    if (producer->Service != nullptr)
+    {
+        AllJoynMessageInfo^ callInfo = ref new AllJoynMessageInfo(AllJoynHelpers::MultibyteToPlatformString(alljoyn_message_getsender(message)));
+
+        Platform::String^ inputArg0;
+        TypeConversionHelpers::GetAllJoynMessageArg(alljoyn_message_getarg(message, 0), "s", &inputArg0);
+
+        create_task(producer->Service->RemovePresetAsync(callInfo, inputArg0)).then([busObject, message](InternetRadioRemovePresetResult^ result)
+        {
+            int32 status;
+
+            if (nullptr == result)
+            {
+                alljoyn_busobject_methodreply_status(busObject, message, ER_BUS_NO_LISTENER);
+                return;
+            }
+
+            status = result->Status;
+            if (AllJoynStatus::Ok != status)
+            {
+                alljoyn_busobject_methodreply_status(busObject, message, static_cast<QStatus>(status));
+                return;
+            }
+
+            size_t argCount = 0;
+            alljoyn_msgarg outputs = alljoyn_msgarg_array_create(argCount);
+
+            alljoyn_busobject_methodreply_args(busObject, message, outputs, argCount);
+            alljoyn_msgarg_destroy(outputs);
+        }).wait();
+    }
+}
+
 QStatus InternetRadioProducer::AddMethodHandler(_In_ alljoyn_interfacedescription interfaceDescription, _In_ PCSTR methodName, _In_ alljoyn_messagereceiver_methodhandler_ptr handler)
 {
     alljoyn_interfacedescription_member member;
@@ -392,6 +392,42 @@ QStatus InternetRadioProducer::OnPropertyGet(_In_ PCSTR interfaceName, _In_ PCST
 {
     UNREFERENCED_PARAMETER(interfaceName);
 
+    if (0 == strcmp(propertyName, "CurrentlyPlaying"))
+    {
+        auto task = create_task(Service->GetCurrentlyPlayingAsync(nullptr));
+        auto result = task.get();
+        
+        if (AllJoynStatus::Ok != result->Status)
+        {
+            return static_cast<QStatus>(result->Status);
+        }
+
+        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "s", result->CurrentlyPlaying));
+    }
+    if (0 == strcmp(propertyName, "Power"))
+    {
+        auto task = create_task(Service->GetPowerAsync(nullptr));
+        auto result = task.get();
+        
+        if (AllJoynStatus::Ok != result->Status)
+        {
+            return static_cast<QStatus>(result->Status);
+        }
+
+        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "b", result->Power));
+    }
+    if (0 == strcmp(propertyName, "Presets"))
+    {
+        auto task = create_task(Service->GetPresetsAsync(nullptr));
+        auto result = task.get();
+        
+        if (AllJoynStatus::Ok != result->Status)
+        {
+            return static_cast<QStatus>(result->Status);
+        }
+
+        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "s", result->Presets));
+    }
     if (0 == strcmp(propertyName, "Version"))
     {
         auto task = create_task(Service->GetVersionAsync(nullptr));
@@ -416,42 +452,6 @@ QStatus InternetRadioProducer::OnPropertyGet(_In_ PCSTR interfaceName, _In_ PCST
 
         return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "d", result->Volume));
     }
-    if (0 == strcmp(propertyName, "CurrentlyPlaying"))
-    {
-        auto task = create_task(Service->GetCurrentlyPlayingAsync(nullptr));
-        auto result = task.get();
-        
-        if (AllJoynStatus::Ok != result->Status)
-        {
-            return static_cast<QStatus>(result->Status);
-        }
-
-        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "s", result->CurrentlyPlaying));
-    }
-    if (0 == strcmp(propertyName, "Presets"))
-    {
-        auto task = create_task(Service->GetPresetsAsync(nullptr));
-        auto result = task.get();
-        
-        if (AllJoynStatus::Ok != result->Status)
-        {
-            return static_cast<QStatus>(result->Status);
-        }
-
-        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "s", result->Presets));
-    }
-    if (0 == strcmp(propertyName, "Power"))
-    {
-        auto task = create_task(Service->GetPowerAsync(nullptr));
-        auto result = task.get();
-        
-        if (AllJoynStatus::Ok != result->Status)
-        {
-            return static_cast<QStatus>(result->Status);
-        }
-
-        return static_cast<QStatus>(TypeConversionHelpers::SetAllJoynMessageArg(value, "b", result->Power));
-    }
 
     return ER_BUS_NO_SUCH_PROPERTY;
 }
@@ -460,16 +460,6 @@ QStatus InternetRadioProducer::OnPropertySet(_In_ PCSTR interfaceName, _In_ PCST
 {
     UNREFERENCED_PARAMETER(interfaceName);
 
-    if (0 == strcmp(propertyName, "Volume"))
-    {
-        double argument;
-        TypeConversionHelpers::GetAllJoynMessageArg(value, "d", &argument);
-
-        auto task = create_task(Service->SetVolumeAsync(nullptr, argument));
-        auto result = task.get();
-
-        return static_cast<QStatus>(result->Status);
-    }
     if (0 == strcmp(propertyName, "Power"))
     {
         bool argument;
@@ -480,25 +470,17 @@ QStatus InternetRadioProducer::OnPropertySet(_In_ PCSTR interfaceName, _In_ PCST
 
         return static_cast<QStatus>(result->Status);
     }
-    return ER_BUS_NO_SUCH_PROPERTY;
-}
-
-void InternetRadioProducer::EmitVolumeChanged()
-{
-    create_task([&]
+    if (0 == strcmp(propertyName, "Volume"))
     {
-        alljoyn_msgarg value = alljoyn_msgarg_create();
-        OnPropertyGet("com.microsoft.maker.InternetRadio", "Volume", value);
+        double argument;
+        TypeConversionHelpers::GetAllJoynMessageArg(value, "d", &argument);
 
-        alljoyn_busobject_emitpropertychanged(
-            m_busObject,
-            "com.microsoft.maker.InternetRadio",
-            "Volume",
-            value,
-            m_sessionId);
+        auto task = create_task(Service->SetVolumeAsync(nullptr, argument));
+        auto result = task.get();
 
-        alljoyn_msgarg_destroy(value);
-    });
+        return static_cast<QStatus>(result->Status);
+    }
+    return ER_BUS_NO_SUCH_PROPERTY;
 }
 
 void InternetRadioProducer::EmitCurrentlyPlayingChanged()
@@ -512,6 +494,24 @@ void InternetRadioProducer::EmitCurrentlyPlayingChanged()
             m_busObject,
             "com.microsoft.maker.InternetRadio",
             "CurrentlyPlaying",
+            value,
+            m_sessionId);
+
+        alljoyn_msgarg_destroy(value);
+    });
+}
+
+void InternetRadioProducer::EmitPowerChanged()
+{
+    create_task([&]
+    {
+        alljoyn_msgarg value = alljoyn_msgarg_create();
+        OnPropertyGet("com.microsoft.maker.InternetRadio", "Power", value);
+
+        alljoyn_busobject_emitpropertychanged(
+            m_busObject,
+            "com.microsoft.maker.InternetRadio",
+            "Power",
             value,
             m_sessionId);
 
@@ -537,17 +537,17 @@ void InternetRadioProducer::EmitPresetsChanged()
     });
 }
 
-void InternetRadioProducer::EmitPowerChanged()
+void InternetRadioProducer::EmitVolumeChanged()
 {
     create_task([&]
     {
         alljoyn_msgarg value = alljoyn_msgarg_create();
-        OnPropertyGet("com.microsoft.maker.InternetRadio", "Power", value);
+        OnPropertyGet("com.microsoft.maker.InternetRadio", "Volume", value);
 
         alljoyn_busobject_emitpropertychanged(
             m_busObject,
             "com.microsoft.maker.InternetRadio",
-            "Power",
+            "Volume",
             value,
             m_sessionId);
 
@@ -587,8 +587,28 @@ void InternetRadioProducer::Start()
 
     result = AddMethodHandler(
         interfaceDescription, 
+        "AddPreset", 
+        [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallAddPresetHandler(busObject, message); });
+    if (result != ER_OK)
+    {
+        StopInternal(result);
+        return;
+    }
+
+    result = AddMethodHandler(
+        interfaceDescription, 
         "NextPreset", 
         [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallNextPresetHandler(busObject, message); });
+    if (result != ER_OK)
+    {
+        StopInternal(result);
+        return;
+    }
+
+    result = AddMethodHandler(
+        interfaceDescription, 
+        "PlayPreset", 
+        [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallPlayPresetHandler(busObject, message); });
     if (result != ER_OK)
     {
         StopInternal(result);
@@ -607,28 +627,8 @@ void InternetRadioProducer::Start()
 
     result = AddMethodHandler(
         interfaceDescription, 
-        "AddPreset", 
-        [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallAddPresetHandler(busObject, message); });
-    if (result != ER_OK)
-    {
-        StopInternal(result);
-        return;
-    }
-
-    result = AddMethodHandler(
-        interfaceDescription, 
         "RemovePreset", 
         [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallRemovePresetHandler(busObject, message); });
-    if (result != ER_OK)
-    {
-        StopInternal(result);
-        return;
-    }
-
-    result = AddMethodHandler(
-        interfaceDescription, 
-        "PlayPreset", 
-        [](alljoyn_busobject busObject, const alljoyn_interfacedescription_member* member, alljoyn_message message) { UNREFERENCED_PARAMETER(member); CallPlayPresetHandler(busObject, message); });
     if (result != ER_OK)
     {
         StopInternal(result);
@@ -704,46 +704,38 @@ int32 InternetRadioProducer::RemoveMemberFromSession(_In_ String^ uniqueName)
 }
 
 PCSTR com::microsoft::maker::InternetRadio::c_InternetRadioIntrospectionXml = "<interface name=\"com.microsoft.maker.InternetRadio\">"
-"  <annotation name=\"org.alljoyn.Bus.Secure\" value=\"false\" />"
-"  <description language=\"en\">Interface for an Internet Radio device</description>"
-"  <property name=\"Version\" type=\"q\" access=\"read\">"
-"    <description>Interface version</description>"
-"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"const\" />"
-"  </property>"
-"  <method name=\"NextPreset\">"
-"    <description language=\"en\"></description>"
-"  </method>"
-"  <method name=\"PreviousPreset\">"
-"    <description language=\"en\"></description>"
-"  </method>"
 "  <method name=\"AddPreset\">"
-"    <description language=\"en\"></description>"
 "    <arg name=\"presetName\" type=\"s\" direction=\"in\" />"
 "    <arg name=\"presetAddress\" type=\"s\" direction=\"in\" />"
 "  </method>"
-"  <method name=\"RemovePreset\">"
-"    <description language=\"en\"></description>"
-"    <arg name=\"presetName\" type=\"s\" direction=\"in\" />"
-"  </method>"
+"  <method name=\"NextPreset\"></method>"
 "  <method name=\"PlayPreset\">"
-"    <description language=\"en\">Plays the given preset</description>"
 "    <arg name=\"presetName\" type=\"s\" direction=\"in\" />"
 "  </method>"
-"  <property name=\"Volume\" type=\"d\" access=\"readwrite\">"
-"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
-"    <description language=\"en\">Volume level of the device</description>"
-"  </property>"
+"  <method name=\"PreviousPreset\"></method>"
+"  <method name=\"RemovePreset\">"
+"    <arg name=\"presetName\" type=\"s\" direction=\"in\" />"
+"  </method>"
 "  <property name=\"CurrentlyPlaying\" type=\"s\" access=\"read\">"
+"    <annotation name=\"\" value=\"\" />"
 "    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
-"    <description language=\"en\">The currently playing preset</description>"
-"  </property>"
-"  <property name=\"Presets\" type=\"s\" access=\"read\">"
-"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
-"    <description language=\"en\">List of presets (colon delimited)</description>"
 "  </property>"
 "  <property name=\"Power\" type=\"b\" access=\"readwrite\">"
+"    <annotation name=\"\" value=\"\" />"
 "    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
-"    <description language=\"en\">List of presets (colon delimited)</description>"
 "  </property>"
+"  <property name=\"Presets\" type=\"s\" access=\"read\">"
+"    <annotation name=\"\" value=\"\" />"
+"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
+"  </property>"
+"  <property name=\"Version\" type=\"q\" access=\"read\">"
+"    <annotation name=\"\" value=\"\" />"
+"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"const\" />"
+"  </property>"
+"  <property name=\"Volume\" type=\"d\" access=\"readwrite\">"
+"    <annotation name=\"\" value=\"\" />"
+"    <annotation name=\"org.freedesktop.DBus.Property.EmitsChangedSignal\" value=\"true\" />"
+"  </property>"
+"  <annotation name=\"org.alljoyn.Bus.Secure\" value=\"false\" />"
 "</interface>"
 ;

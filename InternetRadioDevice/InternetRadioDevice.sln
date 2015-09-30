@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioController", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadio", "InternetRadio\InternetRadio.csproj", "{20A2542F-14EA-458D-9118-5AE4E13C0E05}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InternetRadioAllJoyn", "InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj", "{49460E79-E4EC-40CD-A0C9-02475B990D22}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDisplay", "..\lib\TextDisplay\TextDisplayManager\TextDisplay.csproj", "{060399D9-871D-4A17-A249-A12B9D3F7682}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalMediaEngine", "..\lib\UniversalMediaEngine\UniversalMediaEngine\UniversalMediaEngine.vcxproj", "{81D46002-EC95-4423-BF6E-DBE82CCD55CA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InternetRadioAllJoyn", "InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj", "{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,20 +65,6 @@ Global
 		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.ActiveCfg = Release|x86
 		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.Build.0 = Release|x86
 		{20A2542F-14EA-458D-9118-5AE4E13C0E05}.Release|x86.Deploy.0 = Release|x86
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|ARM.ActiveCfg = Debug|ARM
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|ARM.Build.0 = Debug|ARM
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|x64.ActiveCfg = Debug|x64
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|x64.Build.0 = Debug|x64
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|x86.ActiveCfg = Debug|Win32
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Debug|x86.Build.0 = Debug|Win32
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|Any CPU.ActiveCfg = Release|Win32
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|ARM.ActiveCfg = Release|ARM
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|ARM.Build.0 = Release|ARM
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|x64.ActiveCfg = Release|x64
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|x64.Build.0 = Release|x64
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|x86.ActiveCfg = Release|Win32
-		{49460E79-E4EC-40CD-A0C9-02475B990D22}.Release|x86.Build.0 = Release|Win32
 		{060399D9-871D-4A17-A249-A12B9D3F7682}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{060399D9-871D-4A17-A249-A12B9D3F7682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{060399D9-871D-4A17-A249-A12B9D3F7682}.Debug|ARM.ActiveCfg = Debug|ARM
@@ -109,6 +95,20 @@ Global
 		{81D46002-EC95-4423-BF6E-DBE82CCD55CA}.Release|x64.Build.0 = Release|x64
 		{81D46002-EC95-4423-BF6E-DBE82CCD55CA}.Release|x86.ActiveCfg = Release|Win32
 		{81D46002-EC95-4423-BF6E-DBE82CCD55CA}.Release|x86.Build.0 = Release|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|ARM.Build.0 = Debug|ARM
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|x64.ActiveCfg = Debug|x64
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|x64.Build.0 = Debug|x64
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|x86.ActiveCfg = Debug|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Debug|x86.Build.0 = Debug|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|Any CPU.ActiveCfg = Release|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|ARM.ActiveCfg = Release|ARM
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|ARM.Build.0 = Release|ARM
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x64.ActiveCfg = Release|x64
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x64.Build.0 = Release|x64
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x86.ActiveCfg = Release|Win32
+		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

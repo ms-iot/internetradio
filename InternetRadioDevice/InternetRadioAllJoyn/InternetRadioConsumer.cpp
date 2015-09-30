@@ -117,6 +117,36 @@ IAsyncOperation<InternetRadioJoinSessionResult^>^ InternetRadioConsumer::JoinSes
     });
 }
 
+IAsyncOperation<InternetRadioAddPresetResult^>^ InternetRadioConsumer::AddPresetAsync(_In_ Platform::String^ interfaceMemberPresetName, _In_ Platform::String^ interfaceMemberPresetAddress)
+{
+    return create_async([this, interfaceMemberPresetName, interfaceMemberPresetAddress]() -> InternetRadioAddPresetResult^
+    {
+        auto result = ref new InternetRadioAddPresetResult();
+        
+        alljoyn_message message = alljoyn_message_create(m_nativeBusAttachment);
+        size_t argCount = 2;
+        alljoyn_msgarg inputs = alljoyn_msgarg_array_create(argCount);
+
+        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 0), "s", interfaceMemberPresetName);
+        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 1), "s", interfaceMemberPresetAddress);
+        
+        QStatus status = alljoyn_proxybusobject_methodcall(
+            ProxyBusObject,
+            "com.microsoft.maker.InternetRadio",
+            "AddPreset",
+            inputs,
+            argCount,
+            message,
+            c_MessageTimeoutInMilliseconds,
+            0);
+        result->Status = static_cast<int>(status);
+        
+        alljoyn_message_destroy(message);
+        alljoyn_msgarg_destroy(inputs);
+
+        return result;
+    });
+}
 IAsyncOperation<InternetRadioNextPresetResult^>^ InternetRadioConsumer::NextPresetAsync()
 {
     return create_async([this]() -> InternetRadioNextPresetResult^
@@ -145,6 +175,35 @@ IAsyncOperation<InternetRadioNextPresetResult^>^ InternetRadioConsumer::NextPres
         return result;
     });
 }
+IAsyncOperation<InternetRadioPlayPresetResult^>^ InternetRadioConsumer::PlayPresetAsync(_In_ Platform::String^ interfaceMemberPresetName)
+{
+    return create_async([this, interfaceMemberPresetName]() -> InternetRadioPlayPresetResult^
+    {
+        auto result = ref new InternetRadioPlayPresetResult();
+        
+        alljoyn_message message = alljoyn_message_create(m_nativeBusAttachment);
+        size_t argCount = 1;
+        alljoyn_msgarg inputs = alljoyn_msgarg_array_create(argCount);
+
+        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 0), "s", interfaceMemberPresetName);
+        
+        QStatus status = alljoyn_proxybusobject_methodcall(
+            ProxyBusObject,
+            "com.microsoft.maker.InternetRadio",
+            "PlayPreset",
+            inputs,
+            argCount,
+            message,
+            c_MessageTimeoutInMilliseconds,
+            0);
+        result->Status = static_cast<int>(status);
+        
+        alljoyn_message_destroy(message);
+        alljoyn_msgarg_destroy(inputs);
+
+        return result;
+    });
+}
 IAsyncOperation<InternetRadioPreviousPresetResult^>^ InternetRadioConsumer::PreviousPresetAsync()
 {
     return create_async([this]() -> InternetRadioPreviousPresetResult^
@@ -160,36 +219,6 @@ IAsyncOperation<InternetRadioPreviousPresetResult^>^ InternetRadioConsumer::Prev
             ProxyBusObject,
             "com.microsoft.maker.InternetRadio",
             "PreviousPreset",
-            inputs,
-            argCount,
-            message,
-            c_MessageTimeoutInMilliseconds,
-            0);
-        result->Status = static_cast<int>(status);
-        
-        alljoyn_message_destroy(message);
-        alljoyn_msgarg_destroy(inputs);
-
-        return result;
-    });
-}
-IAsyncOperation<InternetRadioAddPresetResult^>^ InternetRadioConsumer::AddPresetAsync(_In_ Platform::String^ interfaceMemberPresetName, _In_ Platform::String^ interfaceMemberPresetAddress)
-{
-    return create_async([this, interfaceMemberPresetName, interfaceMemberPresetAddress]() -> InternetRadioAddPresetResult^
-    {
-        auto result = ref new InternetRadioAddPresetResult();
-        
-        alljoyn_message message = alljoyn_message_create(m_nativeBusAttachment);
-        size_t argCount = 2;
-        alljoyn_msgarg inputs = alljoyn_msgarg_array_create(argCount);
-
-        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 0), "s", interfaceMemberPresetName);
-        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 1), "s", interfaceMemberPresetAddress);
-        
-        QStatus status = alljoyn_proxybusobject_methodcall(
-            ProxyBusObject,
-            "com.microsoft.maker.InternetRadio",
-            "AddPreset",
             inputs,
             argCount,
             message,
@@ -232,32 +261,148 @@ IAsyncOperation<InternetRadioRemovePresetResult^>^ InternetRadioConsumer::Remove
         return result;
     });
 }
-IAsyncOperation<InternetRadioPlayPresetResult^>^ InternetRadioConsumer::PlayPresetAsync(_In_ Platform::String^ interfaceMemberPresetName)
-{
-    return create_async([this, interfaceMemberPresetName]() -> InternetRadioPlayPresetResult^
-    {
-        auto result = ref new InternetRadioPlayPresetResult();
-        
-        alljoyn_message message = alljoyn_message_create(m_nativeBusAttachment);
-        size_t argCount = 1;
-        alljoyn_msgarg inputs = alljoyn_msgarg_array_create(argCount);
 
-        TypeConversionHelpers::SetAllJoynMessageArg(alljoyn_msgarg_array_element(inputs, 0), "s", interfaceMemberPresetName);
+IAsyncOperation<InternetRadioGetCurrentlyPlayingResult^>^ InternetRadioConsumer::GetCurrentlyPlayingAsync()
+{
+    return create_async([this]() -> InternetRadioGetCurrentlyPlayingResult^
+    {
+        PropertyGetContext<Platform::String^> getContext;
         
-        QStatus status = alljoyn_proxybusobject_methodcall(
+        alljoyn_proxybusobject_getpropertyasync(
             ProxyBusObject,
             "com.microsoft.maker.InternetRadio",
-            "PlayPreset",
-            inputs,
-            argCount,
-            message,
-            c_MessageTimeoutInMilliseconds,
-            0);
-        result->Status = static_cast<int>(status);
-        
-        alljoyn_message_destroy(message);
-        alljoyn_msgarg_destroy(inputs);
+            "CurrentlyPlaying",
+            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
+            {
+                UNREFERENCED_PARAMETER(obj);
+                auto propertyContext = static_cast<PropertyGetContext<Platform::String^>*>(context);
 
+                if (ER_OK == status)
+                {
+                    Platform::String^ argument;
+                    TypeConversionHelpers::GetAllJoynMessageArg(value, "s", &argument);
+
+                    propertyContext->SetValue(argument);
+                }
+                propertyContext->SetStatus(status);
+                propertyContext->SetEvent();
+            },
+            c_MessageTimeoutInMilliseconds,
+            &getContext);
+
+        getContext.Wait();
+
+        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
+        result->Status = getContext.GetStatus();
+        result->CurrentlyPlaying = getContext.GetValue();
+        return result;
+    });
+}
+
+IAsyncOperation<InternetRadioSetPowerResult^>^ InternetRadioConsumer::SetPowerAsync(_In_ bool value)
+{
+    return create_async([this, value]() -> InternetRadioSetPowerResult^
+    {
+        PropertySetContext setContext;
+
+        alljoyn_msgarg inputArgument = alljoyn_msgarg_create();
+        TypeConversionHelpers::SetAllJoynMessageArg(inputArgument, "b", value);
+
+        alljoyn_proxybusobject_setpropertyasync(
+            ProxyBusObject,
+            "com.microsoft.maker.InternetRadio",
+            "Power",
+            inputArgument,
+            [](QStatus status, alljoyn_proxybusobject obj, void* context)
+            {
+                UNREFERENCED_PARAMETER(obj);
+                auto propertyContext = static_cast<PropertySetContext*>(context);
+                propertyContext->SetStatus(status);
+                propertyContext->SetEvent();
+            },
+            c_MessageTimeoutInMilliseconds,
+            &setContext);
+
+        alljoyn_msgarg_destroy(inputArgument);
+
+        setContext.Wait();
+
+        auto result = ref new InternetRadioSetPowerResult();
+        result->Status = setContext.GetStatus();
+        return result;
+    });
+}
+
+IAsyncOperation<InternetRadioGetPowerResult^>^ InternetRadioConsumer::GetPowerAsync()
+{
+    return create_async([this]() -> InternetRadioGetPowerResult^
+    {
+        PropertyGetContext<bool> getContext;
+        
+        alljoyn_proxybusobject_getpropertyasync(
+            ProxyBusObject,
+            "com.microsoft.maker.InternetRadio",
+            "Power",
+            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
+            {
+                UNREFERENCED_PARAMETER(obj);
+                auto propertyContext = static_cast<PropertyGetContext<bool>*>(context);
+
+                if (ER_OK == status)
+                {
+                    bool argument;
+                    TypeConversionHelpers::GetAllJoynMessageArg(value, "b", &argument);
+
+                    propertyContext->SetValue(argument);
+                }
+                propertyContext->SetStatus(status);
+                propertyContext->SetEvent();
+            },
+            c_MessageTimeoutInMilliseconds,
+            &getContext);
+
+        getContext.Wait();
+
+        auto result = ref new InternetRadioGetPowerResult();
+        result->Status = getContext.GetStatus();
+        result->Power = getContext.GetValue();
+        return result;
+    });
+}
+
+IAsyncOperation<InternetRadioGetPresetsResult^>^ InternetRadioConsumer::GetPresetsAsync()
+{
+    return create_async([this]() -> InternetRadioGetPresetsResult^
+    {
+        PropertyGetContext<Platform::String^> getContext;
+        
+        alljoyn_proxybusobject_getpropertyasync(
+            ProxyBusObject,
+            "com.microsoft.maker.InternetRadio",
+            "Presets",
+            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
+            {
+                UNREFERENCED_PARAMETER(obj);
+                auto propertyContext = static_cast<PropertyGetContext<Platform::String^>*>(context);
+
+                if (ER_OK == status)
+                {
+                    Platform::String^ argument;
+                    TypeConversionHelpers::GetAllJoynMessageArg(value, "s", &argument);
+
+                    propertyContext->SetValue(argument);
+                }
+                propertyContext->SetStatus(status);
+                propertyContext->SetEvent();
+            },
+            c_MessageTimeoutInMilliseconds,
+            &getContext);
+
+        getContext.Wait();
+
+        auto result = ref new InternetRadioGetPresetsResult();
+        result->Status = getContext.GetStatus();
+        result->Presets = getContext.GetValue();
         return result;
     });
 }
@@ -370,151 +515,6 @@ IAsyncOperation<InternetRadioGetVolumeResult^>^ InternetRadioConsumer::GetVolume
     });
 }
 
-IAsyncOperation<InternetRadioGetCurrentlyPlayingResult^>^ InternetRadioConsumer::GetCurrentlyPlayingAsync()
-{
-    return create_async([this]() -> InternetRadioGetCurrentlyPlayingResult^
-    {
-        PropertyGetContext<Platform::String^> getContext;
-        
-        alljoyn_proxybusobject_getpropertyasync(
-            ProxyBusObject,
-            "com.microsoft.maker.InternetRadio",
-            "CurrentlyPlaying",
-            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
-            {
-                UNREFERENCED_PARAMETER(obj);
-                auto propertyContext = static_cast<PropertyGetContext<Platform::String^>*>(context);
-
-                if (ER_OK == status)
-                {
-                    Platform::String^ argument;
-                    TypeConversionHelpers::GetAllJoynMessageArg(value, "s", &argument);
-
-                    propertyContext->SetValue(argument);
-                }
-                propertyContext->SetStatus(status);
-                propertyContext->SetEvent();
-            },
-            c_MessageTimeoutInMilliseconds,
-            &getContext);
-
-        getContext.Wait();
-
-        auto result = ref new InternetRadioGetCurrentlyPlayingResult();
-        result->Status = getContext.GetStatus();
-        result->CurrentlyPlaying = getContext.GetValue();
-        return result;
-    });
-}
-
-IAsyncOperation<InternetRadioGetPresetsResult^>^ InternetRadioConsumer::GetPresetsAsync()
-{
-    return create_async([this]() -> InternetRadioGetPresetsResult^
-    {
-        PropertyGetContext<Platform::String^> getContext;
-        
-        alljoyn_proxybusobject_getpropertyasync(
-            ProxyBusObject,
-            "com.microsoft.maker.InternetRadio",
-            "Presets",
-            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
-            {
-                UNREFERENCED_PARAMETER(obj);
-                auto propertyContext = static_cast<PropertyGetContext<Platform::String^>*>(context);
-
-                if (ER_OK == status)
-                {
-                    Platform::String^ argument;
-                    TypeConversionHelpers::GetAllJoynMessageArg(value, "s", &argument);
-
-                    propertyContext->SetValue(argument);
-                }
-                propertyContext->SetStatus(status);
-                propertyContext->SetEvent();
-            },
-            c_MessageTimeoutInMilliseconds,
-            &getContext);
-
-        getContext.Wait();
-
-        auto result = ref new InternetRadioGetPresetsResult();
-        result->Status = getContext.GetStatus();
-        result->Presets = getContext.GetValue();
-        return result;
-    });
-}
-
-IAsyncOperation<InternetRadioSetPowerResult^>^ InternetRadioConsumer::SetPowerAsync(_In_ bool value)
-{
-    return create_async([this, value]() -> InternetRadioSetPowerResult^
-    {
-        PropertySetContext setContext;
-
-        alljoyn_msgarg inputArgument = alljoyn_msgarg_create();
-        TypeConversionHelpers::SetAllJoynMessageArg(inputArgument, "b", value);
-
-        alljoyn_proxybusobject_setpropertyasync(
-            ProxyBusObject,
-            "com.microsoft.maker.InternetRadio",
-            "Power",
-            inputArgument,
-            [](QStatus status, alljoyn_proxybusobject obj, void* context)
-            {
-                UNREFERENCED_PARAMETER(obj);
-                auto propertyContext = static_cast<PropertySetContext*>(context);
-                propertyContext->SetStatus(status);
-                propertyContext->SetEvent();
-            },
-            c_MessageTimeoutInMilliseconds,
-            &setContext);
-
-        alljoyn_msgarg_destroy(inputArgument);
-
-        setContext.Wait();
-
-        auto result = ref new InternetRadioSetPowerResult();
-        result->Status = setContext.GetStatus();
-        return result;
-    });
-}
-
-IAsyncOperation<InternetRadioGetPowerResult^>^ InternetRadioConsumer::GetPowerAsync()
-{
-    return create_async([this]() -> InternetRadioGetPowerResult^
-    {
-        PropertyGetContext<bool> getContext;
-        
-        alljoyn_proxybusobject_getpropertyasync(
-            ProxyBusObject,
-            "com.microsoft.maker.InternetRadio",
-            "Power",
-            [](QStatus status, alljoyn_proxybusobject obj, const alljoyn_msgarg value, void* context)
-            {
-                UNREFERENCED_PARAMETER(obj);
-                auto propertyContext = static_cast<PropertyGetContext<bool>*>(context);
-
-                if (ER_OK == status)
-                {
-                    bool argument;
-                    TypeConversionHelpers::GetAllJoynMessageArg(value, "b", &argument);
-
-                    propertyContext->SetValue(argument);
-                }
-                propertyContext->SetStatus(status);
-                propertyContext->SetEvent();
-            },
-            c_MessageTimeoutInMilliseconds,
-            &getContext);
-
-        getContext.Wait();
-
-        auto result = ref new InternetRadioGetPowerResult();
-        result->Status = getContext.GetStatus();
-        result->Power = getContext.GetValue();
-        return result;
-    });
-}
-
 void InternetRadioConsumer::OnPropertyChanged(_In_ alljoyn_proxybusobject obj, _In_ PCSTR interfaceName, _In_ const alljoyn_msgarg changed, _In_ const alljoyn_msgarg invalidated)
 {
     UNREFERENCED_PARAMETER(obj);
@@ -537,21 +537,21 @@ void InternetRadioConsumer::OnPropertyChanged(_In_ alljoyn_proxybusobject obj, _
             return;
         }
 
-        if (strcmp("Volume", propertyName) == 0)
-        {
-            VolumeChanged(this, nullptr);
-        }
         if (strcmp("CurrentlyPlaying", propertyName) == 0)
         {
             CurrentlyPlayingChanged(this, nullptr);
+        }
+        if (strcmp("Power", propertyName) == 0)
+        {
+            PowerChanged(this, nullptr);
         }
         if (strcmp("Presets", propertyName) == 0)
         {
             PresetsChanged(this, nullptr);
         }
-        if (strcmp("Power", propertyName) == 0)
+        if (strcmp("Volume", propertyName) == 0)
         {
-            PowerChanged(this, nullptr);
+            VolumeChanged(this, nullptr);
         }
     }
 }
@@ -594,7 +594,7 @@ int32 InternetRadioConsumer::JoinSession(_In_ AllJoynServiceInfo^ serviceInfo)
         return AllJoynStatus::Fail;
     }
 
-    PCSTR propertyNames[] = { "Volume", "CurrentlyPlaying", "Presets", "Power" };
+    PCSTR propertyNames[] = { "CurrentlyPlaying", "Power", "Presets", "Volume" };
 
     RETURN_IF_QSTATUS_ERROR(alljoyn_proxybusobject_registerpropertieschangedlistener(
         ProxyBusObject,
