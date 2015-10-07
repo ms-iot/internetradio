@@ -20,7 +20,7 @@ using Windows.System.Threading;
 
 namespace InternetRadio
 {
-    public class WebServer
+    public sealed class WebServer
     {
         public bool IsRunning { get; private set; }
 
@@ -152,7 +152,7 @@ namespace InternetRadio
                 else if(request.Contains(NavConstants.HOME_PAGE))
                 {
                     // Generate the default config page
-                    string html = await helper.GenerateStatusPage();
+                    string html = await helper.GeneratePage(NavConstants.HOME_PAGE);
                     await WebHelper.WriteToStream(html, os);
                 }
                 // Request for the settings page
@@ -229,7 +229,7 @@ namespace InternetRadio
                 try
                 {
                     // Try to send an error page back if there was a problem servicing the request
-                    string html = helper.GeneratePage("Error", "Error", "There's been an error: " + ex.Message + "<br><br>" + ex.StackTrace);
+                    string html = helper.GenerateErrorPage("There's been an error: " + ex.Message + "<br><br>" + ex.StackTrace);
                     await WebHelper.WriteToStream(html, os);
                 }
                 catch (Exception e)
