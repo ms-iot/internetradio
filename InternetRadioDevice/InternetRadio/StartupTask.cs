@@ -3,6 +3,7 @@ using Windows.ApplicationModel.Background;
 using Microsoft.ApplicationInsights;
 using com.microsoft.maker.InternetRadio;
 using Windows.Devices.AllJoyn;
+using System;
 
 // The Background Application template is documented at http://go.microsoft.com/fwlink/?LinkID=533884&clcid=0x409
 
@@ -42,6 +43,21 @@ namespace InternetRadio
             }
 
             s_telemetryClient.TrackEvent(eventName, properties);
+        }
+
+        public static void WriteTelemetryException(Exception e)
+        {
+            WriteTelemetryException(e, new Dictionary<string, string>());
+        }
+
+        public static void WriteTelemetryException(Exception e, IDictionary<string, string> properties)
+        {
+            if (null == s_telemetryClient)
+            {
+                s_telemetryClient = new TelemetryClient();
+            }
+
+            s_telemetryClient.TrackException(e, properties);
         }
 
         private async void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
