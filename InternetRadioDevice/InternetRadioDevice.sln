@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalMediaEngine", "..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InternetRadioAllJoyn", "InternetRadioAllJoyn\InternetRadioAllJoyn.vcxproj", "{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternetRadioHeaded", "InternetRadioHeaded\InternetRadioHeaded.csproj", "{854EFB93-8BB3-4701-A915-8229E6366DA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,26 @@ Global
 		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x64.Build.0 = Release|x64
 		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x86.ActiveCfg = Release|Win32
 		{5DAF0D4C-EF4F-4E20-8877-DB2AAEB89BBD}.Release|x86.Build.0 = Release|Win32
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|ARM.ActiveCfg = Debug|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|ARM.Build.0 = Debug|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|ARM.Deploy.0 = Debug|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x64.ActiveCfg = Debug|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x64.Build.0 = Debug|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x64.Deploy.0 = Debug|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x86.ActiveCfg = Debug|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x86.Build.0 = Debug|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Debug|x86.Deploy.0 = Debug|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|Any CPU.ActiveCfg = Release|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|ARM.ActiveCfg = Release|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|ARM.Build.0 = Release|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|ARM.Deploy.0 = Release|ARM
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x64.ActiveCfg = Release|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x64.Build.0 = Release|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x64.Deploy.0 = Release|x64
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x86.ActiveCfg = Release|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x86.Build.0 = Release|x86
+		{854EFB93-8BB3-4701-A915-8229E6366DA8}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
