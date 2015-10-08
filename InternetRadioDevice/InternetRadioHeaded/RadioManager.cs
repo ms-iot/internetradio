@@ -45,10 +45,10 @@ namespace InternetRadio
             await this.radioPlaybackManager.InitialzeAsync();
 
             // Initialize the input managers
-            allJoynInterfaceManager = new AllJoynInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
-            this.allJoynInterfaceManager.Initialize();
+            //allJoynInterfaceManager = new AllJoynInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
+            //this.allJoynInterfaceManager.Initialize();
             
-            await this.tryWriteToDisplay(this.resourceLoader.GetString("AllJoynIdMessage") +"\n" + this.allJoynInterfaceManager.GetBusId(), 0);
+            //await this.tryWriteToDisplay(this.resourceLoader.GetString("AllJoynIdMessage") +"\n" + this.allJoynInterfaceManager.GetBusId(), 0);
 
             this.gpioInterfaceManager = new GpioInterfaceManager(this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
             if (!this.gpioInterfaceManager.Initialize())
