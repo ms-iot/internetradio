@@ -154,11 +154,15 @@ namespace InternetRadio
                     // Generate the default config page
                     string html = await helper.GeneratePage(NavConstants.HOME_PAGE);
                     await WebHelper.WriteToStream(html, os);
+
+                    //handle UI interaction
+
+                    await redirectToPage(NavConstants.HOME_PAGE, os);
                 }
                 // Request for the settings page
                 else if (request.Contains(NavConstants.SETTINGS_PAGE))
                 {
-                    // Process the GET parameters
+                    // Handle UI interation
                     if (request.Contains("?"))
                     {
                         
@@ -168,6 +172,7 @@ namespace InternetRadio
                         // Generate the default config page
 
                     }
+                    await redirectToPage(NavConstants.SETTINGS_PAGE, os);
                 }
                 // Request for a file that is in the Assets\Web folder (e.g. logo, css file)
                 else

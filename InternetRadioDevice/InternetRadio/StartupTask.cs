@@ -14,6 +14,7 @@ namespace InternetRadio
         private static TelemetryClient s_telemetryClient;
         internal static RadioManager s_radioManager;
         private BackgroundTaskDeferral deferral;
+        private static HttpServer s_webServer;
 
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -26,6 +27,12 @@ namespace InternetRadio
             {
                 s_radioManager = new RadioManager();
                 await s_radioManager.Initialize();
+            }
+
+            if (null == s_webServer)
+            {
+                s_webServer = new HttpServer(8000);
+                s_webServer.StartServer();
             }
 
         }
