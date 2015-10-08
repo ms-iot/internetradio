@@ -52,19 +52,6 @@ namespace InternetRadio
             var filePath = NavConstants.ASSETSWEB + NavConstants.DEFAULT_PAGE;
             var file = await folder.GetFileAsync(filePath);
             htmlTemplate = await FileIO.ReadTextAsync(file);
-
-
-
-            //// Load the settings page templates
-            //string pageName = Path.GetFileNameWithoutExtension(NavConstants.SETTINGS_PAGE);
-
-            //filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "body");
-            //file = await folder.GetFileAsync(filePath);
-            //this.htmlSettingsBody = await FileIO.ReadTextAsync(file);
-
-            //filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "head");
-            //file = await folder.GetFileAsync(filePath);
-            //this.htmlSettingsHead = await FileIO.ReadTextAsync(file);
         }
 
         /// <summary>
