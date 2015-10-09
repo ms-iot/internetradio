@@ -1,0 +1,77 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Blinky</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="Stylesheet" href="css/common.css" />
+		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
+    		<script type="text/javascript">
+			var blinkInterval = 2;
+	    $(document).ready(function()
+	    {
+	    	$("#blinkyIntervalSlide").change(function () { 
+	    			alert($(this).val());
+	    	});
+				$("#blinkyIntervalSlide").val(blinkInterval);
+
+        if( blinkInterval > 0 )
+	    	{ 
+	    		$("#circle").html("HELLO"+$("#blinkyIntervalSlide")[0].value);
+	  			$("#onOffButton").toggleClass("blinkOff blinkOn");
+					setInterval( function () {
+		  			$("#circle").toggleClass("blinkOff blinkOn");
+		  		}, blinkInterval*1000);
+	    	}
+			}); 
+		</script>
+		<style>
+			#onOffButton {
+				width: 100px;
+				height: 20px;
+				font-size:20;
+				text-align:center;
+				margin: 2cm 0cm 1cm 0cm;
+			}			
+			#circle {
+				width: 100px;
+				height: 100px;
+				-moz-border-radius: 50px;
+				-webkit-border-radius: 50px;
+				border-radius: 50px;
+				font-size:0;
+			}
+			.blinkOn {
+				background: red;
+			}
+			.blinkOff {
+				background: grey;
+			}
+			.blinkOn:after {
+				content: "STOP";
+			}
+			.blinkOff:after {
+				content: "START";
+			}
+			
+		</style>
+
+</head>
+<body>
+    <div id="navigationBar">
+        <p>Navigation</p><ul><li><a href='/home.htm'>Home</a></li><li><a href='/BlinkyPage.htm'>BlinkyPage</a></li></ul>
+    </div>
+    <div id="headerLogo"><img src="img/logo.png" /></div>
+    <div id="titleBar"><p id="pageName">Blinky Page</p></div>
+    <div id="content">
+        
+        <button id="onOffButton" class="blinkOff"></button>
+<div id="circle" class="blinkOff"></div>
+I'm gonna blink at ya.
+</p>
+<input id="blinkyIntervalSlide" type="range" >
+
+    </div>
+</body>
+</html>
