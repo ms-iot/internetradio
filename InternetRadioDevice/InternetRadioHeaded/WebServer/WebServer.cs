@@ -20,27 +20,6 @@ using Windows.System.Threading;
 
 namespace InternetRadio
 {
-    public sealed class WebServer
-    {
-        public bool IsRunning { get; private set; }
-
-        /// <summary>
-        /// Starts the web server on the specified port
-        /// </summary>
-        /// <param name="serverPort">Web server port</param>
-        public void Start(int serverPort)
-        {
-            var server = new HttpServer(serverPort);
-            IAsyncAction asyncAction = ThreadPool.RunAsync(
-                (s) =>
-                {
-                    server.StartServer();
-                });
-
-            IsRunning = true;
-        }
-    }
-
     /// <summary>
     /// HttpServer class that services the content for the Security System web interface
     /// </summary>
@@ -50,13 +29,15 @@ namespace InternetRadio
         private int port = 8000;
         private readonly StreamSocketListener listener;
         private WebHelper helper;
+        private RadioManager radioManager;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="serverPort">Port to start server on</param>
-        public HttpServer(int serverPort)
+        internal HttpServer(int serverPort, RadioManager radioManager)
         {
+            this.radioManager = radioManager;
             helper = new WebHelper();
             listener = new StreamSocketListener();
             port = serverPort;
@@ -66,7 +47,8 @@ namespace InternetRadio
                 {
                     // Process incoming request
                     processRequestAsync(e.Socket);
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     Debug.WriteLine("Exception in StreamSocketListener.ConnectionReceived(): " + ex.Message);
                 }
@@ -124,7 +106,8 @@ namespace InternetRadio
                         throw new InvalidDataException("HTTP method not supported: "
                                                        + requestMethodParts[0]);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine("Exception in processRequestAsync(): " + ex.Message);
 
@@ -136,7 +119,7 @@ namespace InternetRadio
                 */
             }
         }
-        
+
         private async Task writeResponseAsync(string request, IOutputStream os, StreamSocketInformation socketInfo)
         {
             try
@@ -149,30 +132,43 @@ namespace InternetRadio
                     await redirectToPage(NavConstants.HOME_PAGE, os);
                 }
                 // Request for the home page
-                else if(request.Contains(NavConstants.HOME_PAGE))
+                else if (request.Contains(NavConstants.HOME_PAGE))
                 {
                     // Generate the default config page
                     string html = await helper.GeneratePage(NavConstants.HOME_PAGE);
+                    string onState = (this.radioManager.IsOn == PowerState.Powered) ? "true" : "false";
+                    string stationList = @"[" +
+                        "{ 'name':'station1' , 'uri':'http://somewhere.here1' }," +
+                        "{ 'name':'station2' , 'uri':'http://somewhere.here2' }," +
+                        "{ 'name':'station3' , 'uri':'http://somewhere.here3' }," +
+                        " ]";
+
+
+                    html = html.Replace("#onState#", onState);
+                    html = html.Replace("#stationListJSON#", stationList);
+
                     await WebHelper.WriteToStream(html, os);
 
-                    //handle UI interaction
-
-                    await redirectToPage(NavConstants.HOME_PAGE, os);
                 }
                 // Request for the settings page
                 else if (request.Contains(NavConstants.SETTINGS_PAGE))
                 {
-                    // Handle UI interation
-                    if (request.Contains("?"))
+                    if (!string.IsNullOrEmpty(request))
                     {
-                        
-                    }
-                    else
-                    {
-                        // Generate the default config page
+                        IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
 
+                        if (parameters.ContainsKey("powerState"))
+                        {
+                            switch (parameters["powerState"])
+                            {
+                                case "On":
+                                    this.radioManager.IsOn = PowerState.Powered;
+                                    break;
+                            }
+                        }
                     }
-                    await redirectToPage(NavConstants.SETTINGS_PAGE, os);
+                    //handle UI interaction
+                    await redirectToPage(NavConstants.HOME_PAGE, os);
                 }
                 // Request for a file that is in the Assets\Web folder (e.g. logo, css file)
                 else
@@ -186,7 +182,7 @@ namespace InternetRadio
 
                             // Map the requested path to Assets\Web folder
                             string filePath = @"Assets\Web" + request.Replace('/', '\\');
-                            
+
                             // Open the file and write it to the stream
                             using (Stream fs = await folder.OpenStreamForReadAsync(filePath))
                             {
@@ -222,7 +218,8 @@ namespace InternetRadio
                         await resp.FlushAsync();
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine("Exception in writeResponseAsync(): " + ex.Message);
                 Debug.WriteLine(ex.StackTrace);
