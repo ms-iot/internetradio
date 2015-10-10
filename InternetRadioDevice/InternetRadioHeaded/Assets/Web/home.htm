@@ -1,77 +1,91 @@
+<html>
+  <head>
+    <link href='http://ms-iot.github.io/content/css/bootstrap.css' rel='stylesheet' />
+    <link href='css/radio.css' rel='stylesheet' />
+    <title> Internet Radio - Main Page </title>
+	<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript">
+    		var isOn = "#onState#";
+		var stationListJSON = "#stationListJSON#";
+		if (stationListJSON == "#stationListJSON#") //for test
+		{
+    			stationListJSON = '[' +    	
+			'{ "name":"station1" , "uri":"http://somewhere.here1" },' +
+			'{ "name":"station2" , "uri":"http://somewhere.here2" },' +
+			'{ "name":"station3" , "uri":"http://somewhere.here3" }' +
+			' ]';
+		}
+}
+		$(document).ready(function()
+		{
+			if (onState)
+			{
+				$("#onState").toggleClass("radioOff radioOn");
+			}
+				
+			$(JSON.parse(stationListJSON)).each(function() {  
+         		$("#stationList").append( "<div class='row'><a href='" + this.uri + "'>" + this.name + "</a></div>");
+			});
+    		});
+    	</script>
+    	<style>
+    	.radioOn {
+    		content:url('img/radioOn.png');
+    	}
+    	.radioOff {
+    		content:url('img/radioOff.png');
+    	}
+    	</style>
+  </head>
+  <body>
+    <div class='main'>
+      <div class='container'>
+        <div class='row'>
+          <div class='col-md-12 headerbar'>
+            Home
+          </div>
+        </div>
+        <div class='row'>
+                  
+          <div name="stationList" id="stationList" class='col-md-4 listpane'>
+          
+            <div class='row selected'>
+              <a href='AddStation.htm'> + Add Station </a>
+            </div>
+            
+          </div>
+          
+          <div class='col-md-8 mainpane'>
+          
+            <div class='controlpane'>
+            <div class='row'>
+			<img id="onState" class="radioOff"/>
+            	</div>
+            <div class='row'>
+			  	<div class='title'>
+                		Now Playing
+             	 </div>
+              </div>
+              
+              <div class='row'>
+                TechTalk by Steve
+              </div>
+              
+              <div class='controls row'>
+                <ul>
+                  <li> << </li>
+                  <li> > </li>
+                  <li> >> </li>
+                </ul>
+              </div>
+              
+            </div>
+            
+          </div>
 
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Blinky</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="Stylesheet" href="css/common.css" />
-		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
-    		<script type="text/javascript">
-			var blinkInterval = 2;
-	    $(document).ready(function()
-	    {
-	    	$("#blinkyIntervalSlide").change(function () { 
-	    			alert($(this).val());
-	    	});
-				$("#blinkyIntervalSlide").val(blinkInterval);
+        </div>
 
-        if( blinkInterval > 0 )
-	    	{ 
-	    		$("#circle").html("HELLO"+$("#blinkyIntervalSlide")[0].value);
-	  			$("#onOffButton").toggleClass("blinkOff blinkOn");
-					setInterval( function () {
-		  			$("#circle").toggleClass("blinkOff blinkOn");
-		  		}, blinkInterval*1000);
-	    	}
-			}); 
-		</script>
-		<style>
-			#onOffButton {
-				width: 100px;
-				height: 20px;
-				font-size:20;
-				text-align:center;
-				margin: 2cm 0cm 1cm 0cm;
-			}			
-			#circle {
-				width: 100px;
-				height: 100px;
-				-moz-border-radius: 50px;
-				-webkit-border-radius: 50px;
-				border-radius: 50px;
-				font-size:0;
-			}
-			.blinkOn {
-				background: red;
-			}
-			.blinkOff {
-				background: grey;
-			}
-			.blinkOn:after {
-				content: "STOP";
-			}
-			.blinkOff:after {
-				content: "START";
-			}
-			
-		</style>
-
-</head>
-<body>
-    <div id="navigationBar">
-        <p>Navigation</p><ul><li><a href='/home.htm'>Home</a></li><li><a href='/BlinkyPage.htm'>BlinkyPage</a></li></ul>
+      </div>
     </div>
-    <div id="headerLogo"><img src="img/logo.png" /></div>
-    <div id="titleBar"><p id="pageName">Blinky Page</p></div>
-    <div id="content">
-        
-        <button id="onOffButton" class="blinkOff"></button>
-<div id="circle" class="blinkOff"></div>
-I'm gonna blink at ya.
-</p>
-<input id="blinkyIntervalSlide" type="range" >
-
-    </div>
-</body>
+  </body>
 </html>

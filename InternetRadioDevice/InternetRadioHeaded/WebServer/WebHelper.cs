@@ -18,15 +18,8 @@ namespace InternetRadio
     public sealed class WebHelper
     {
         //template for all pages
-        private string htmlTemplate;
-
-        //head and body sections for home page
-        private string htmlHomeHead;
-        private string htmlHomeBody;   
-
-        //head and body setions for settings page
-        private string htmlSettingsHead;
-        private string htmlSettingsBody;
+        private Dictionary<string, string> htmlTemplates = new Dictionary<string, string>();
+        private StorageFolder InstallFolder;
 
         private Dictionary<string, string> links = new Dictionary<string, string>
             {
@@ -39,19 +32,10 @@ namespace InternetRadio
         /// </summary>
         /// <returns></returns>
         /// 
-        public IAsyncAction InitializeAsync()
+        public async Task InitializeAsync()
         {
-            return InitializeAsyncHelper().AsAsyncAction();
-        }
-
-        private async Task InitializeAsyncHelper()
-        {
-            var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
-
-            // Load default template
-            var filePath = NavConstants.ASSETSWEB + NavConstants.DEFAULT_PAGE;
-            var file = await folder.GetFileAsync(filePath);
-            htmlTemplate = await FileIO.ReadTextAsync(file);
+            this.InstallFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            await LoadHTMLTemplate(NavConstants.DEFAULT_PAGE);
         }
 
         /// <summary>
@@ -74,22 +58,47 @@ namespace InternetRadio
             return GeneratePageHelper(page).AsAsyncOperation<string>();
         }
 
-
         private async Task<string> GeneratePageHelper(string page)
         {
-            var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            if (!this.htmlTemplates.ContainsKey(page))
+            {
+                await LoadHTMLTemplate(page);
+            }
+            return this.htmlTemplates[page];
+        }
 
-            string pageName = Path.GetFileNameWithoutExtension(page);
+        private async Task LoadHTMLTemplate(string page)
+        {
+            string htmlBody = "";
+            string htmlHead = "";
 
-            var filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "body");
-            var file = await folder.GetFileAsync(filePath);
-            this.htmlHomeBody = await FileIO.ReadTextAsync(file);
+            var filePath = string.Format("{0}{1}", NavConstants.ASSETSWEB, page);
+            var file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
+            if (file != null)
+            {
+                htmlBody = await FileIO.ReadTextAsync(file);
+                this.htmlTemplates.Add(page, htmlBody);
+            }
+            else
+            {
+                string pageName = Path.GetFileNameWithoutExtension(page);
 
-            filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "head");
-            file = await folder.GetFileAsync(filePath);
-            this.htmlHomeHead = await FileIO.ReadTextAsync(file);
+                filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "body");
+                file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
+                if (file != null)
+                {
 
-            return GeneratePage("Internet Radio", pageName, htmlHomeBody, htmlHomeHead);
+                    htmlBody = await FileIO.ReadTextAsync(file);
+                }
+                filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "head");
+                file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
+                if (file != null)
+                {
+                    htmlHead = await FileIO.ReadTextAsync(file);
+                }
+
+                this.htmlTemplates.Add(page, GeneratePage("Internet Radio", pageName, htmlBody, htmlHead));
+            }
         }
 
         /// <summary>
@@ -112,14 +121,15 @@ namespace InternetRadio
         /// <param name="content">Content for the body of the page</param>
         /// <param name="message">A status message that will appear above the content</param>
         /// <returns></returns>
-        private string GeneratePage(string title, string titleBar, string content, string message)
+        public string GeneratePage(string title, string titleBar, string content, string head = "", string message = "")
         {
-            string html = htmlTemplate;
+            string html = this.htmlTemplates[NavConstants.DEFAULT_PAGE];
             html = html.Replace("#content#", content);
             html = html.Replace("#title#", title);
             html = html.Replace("#titleBar#", titleBar);
             html = html.Replace("#navBar#", createNavBar());
             html = html.Replace("#message#", message);
+            html = html.Replace("#head#", head);
 
             return html;
         }
@@ -129,16 +139,17 @@ namespace InternetRadio
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public IDictionary<string, string> ParseGetParametersFromUrl(Uri uri)
+        public static IDictionary<string, string> ParseGetParametersFromUrl(Uri uri)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>();
-
-            var decoder = new WwwFormUrlDecoder(uri.Query);
-            foreach (WwwFormUrlDecoderEntry entry in decoder)
+            if (!string.IsNullOrEmpty(uri.Query))
             {
-                parameters.Add(entry.Name, entry.Value);
+                var decoder = new WwwFormUrlDecoder(uri.Query);
+                foreach (WwwFormUrlDecoderEntry entry in decoder)
+                {
+                    parameters.Add(entry.Name, entry.Value);
+                }
             }
-
             return parameters;
         }
 

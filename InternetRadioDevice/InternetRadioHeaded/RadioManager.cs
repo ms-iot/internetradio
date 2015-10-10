@@ -8,7 +8,7 @@ using Windows.ApplicationModel.Resources;
 
 namespace InternetRadio
 {
-    class RadioManager 
+    internal class RadioManager 
     {
         private IPlaylistManager radioPresetManager;
         private IPlaybackManager radioPlaybackManager;
@@ -22,6 +22,18 @@ namespace InternetRadio
 
         private uint playbackRetries;
         private const uint maxRetries = 3;
+
+        public PowerState IsOn
+        {
+            get
+            {
+                return this.radioPowerManager.PowerState;
+            }
+            set
+            {
+                this.radioPowerManager.PowerState = value;
+            }
+        }
 
         public async Task Initialize()
         {
