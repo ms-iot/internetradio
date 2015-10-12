@@ -60,14 +60,14 @@ div.controlpane {
 
 .controls ul {
 	list-style-type: none;
-	margin: 0;
 	padding: 0;
+	width: 400px;
 }
 
 .controls ul li {
-	width: 50px;
-	display: inline-block;
+	display:inline-block;
 }
+
 
 .title {
 	font-size: 24px;

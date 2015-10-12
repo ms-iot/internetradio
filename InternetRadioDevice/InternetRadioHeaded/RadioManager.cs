@@ -35,6 +35,14 @@ namespace InternetRadio
             }
         }
 
+        internal IPlaylistManager RadioPresetManager
+        {
+            get
+            {
+                return radioPresetManager;
+            }
+        }
+
         public async Task Initialize()
         {
             this.playbackRetries = 0;
@@ -211,13 +219,13 @@ namespace InternetRadio
             Debug.WriteLine("RadioManager: Display - " + message);
         }
 
-        private void saveVolume(double volume)
+        internal void saveVolume(double volume)
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["volume"] = volume;
         }
 
-        private double loadVolume()
+        internal double loadVolume()
         {
             double volume = 0;
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
