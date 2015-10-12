@@ -101,7 +101,15 @@ namespace InternetRadio
 
                     // Process the request and write a response to send back to the browser
                     if (requestMethodParts[0] == "GET")
+                    {
                         await writeResponseAsync(requestMethodParts[1], output, socket.Information);
+                    }
+                    else if (requestMethodParts[0].ToUpper() == "POST")
+                    {
+                        string requestUri = string.Format("{0}?{1}", requestMethodParts[1], requestParts[14]);
+                        Debug.WriteLine("POST request for: {0} ", requestUri);
+                        await writeResponseAsync(requestUri, output, socket.Information);
+                    }
                     else
                         throw new InvalidDataException("HTTP method not supported: "
                                                        + requestMethodParts[0]);
@@ -136,16 +144,24 @@ namespace InternetRadio
                 {
                     // Generate the default config page
                     string html = await helper.GeneratePage(NavConstants.HOME_PAGE);
-                    string onState = (this.radioManager.IsOn == PowerState.Powered) ? "true" : "false";
-                    string stationList = @"[" +
-                        "{ 'name':'station1' , 'uri':'http://somewhere.here1' }," +
-                        "{ 'name':'station2' , 'uri':'http://somewhere.here2' }," +
-                        "{ 'name':'station3' , 'uri':'http://somewhere.here3' }," +
-                        " ]";
+                    string onState = (this.radioManager.IsOn == PowerState.Powered) ? "On" : "Off";
+                    StringBuilder stationList = new StringBuilder(@"[");
+                    string trackFormat = "{{ \"name\":\"{0}\" , \"uri\":\"{1}\" }}";
+                    foreach (Track track in this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks)
+                    {
+                        if (stationList.Length > 10)
+                        {
+                            stationList.Append(",");
+                        }
+                        stationList.Append(string.Format(trackFormat, track.Name, track.Address));
+                    }
 
+                    stationList.Append(" ]");
 
                     html = html.Replace("#onState#", onState);
-                    html = html.Replace("#stationListJSON#", stationList);
+                    html = html.Replace("#radioVolume#", this.radioManager.loadVolume().ToString());
+                    html = html.Replace("#stationListJSON#", stationList.ToString());
+                    html = html.Replace("#currentTrack#", this.radioManager.RadioPresetManager.CurrentTrack.Name);
 
                     await WebHelper.WriteToStream(html, os);
 
@@ -155,14 +171,45 @@ namespace InternetRadio
                 {
                     if (!string.IsNullOrEmpty(request))
                     {
+                        string settingParam = "";
                         IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
 
-                        if (parameters.ContainsKey("powerState"))
+                        settingParam = "onStateVal";
+                        if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
                         {
-                            switch (parameters["powerState"])
+                            switch (parameters[settingParam])
                             {
                                 case "On":
                                     this.radioManager.IsOn = PowerState.Powered;
+                                    break;
+                                case "Off":
+                                    this.radioManager.IsOn = PowerState.Standby;
+                                    break;
+                            }
+                        }
+                        settingParam = "volumeSlide";
+                        if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
+                        {
+                            double newVolume = this.radioManager.loadVolume();
+                            if (double.TryParse(parameters[settingParam], out newVolume))
+                            {
+                                this.radioManager.saveVolume(newVolume);
+                            }
+                        }
+                        settingParam = "trackAction";
+                        if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
+                        {
+                            switch (parameters[settingParam])
+                            {
+                                case "prev":
+                                    this.radioManager.RadioPresetManager.PreviousTrack();
+                                    break;
+                                case "next":
+                                    this.radioManager.RadioPresetManager.NextTrack();
+                                    break;
+                                case "track":
+                                    if (parameters.ContainsKey("trackName") && !string.IsNullOrWhiteSpace(parameters["trackName"]))
+                                        this.radioManager.RadioPresetManager.PlayTrack(parameters["trackName"]);
                                     break;
                             }
                         }

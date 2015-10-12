@@ -3,39 +3,96 @@
     <link href='http://ms-iot.github.io/content/css/bootstrap.css' rel='stylesheet' />
     <link href='css/radio.css' rel='stylesheet' />
     <title> Internet Radio - Main Page </title>
-	<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
     <script type="text/javascript">
-    		var isOn = "#onState#";
-		var stationListJSON = "#stationListJSON#";
-		if (stationListJSON == "#stationListJSON#") //for test
-		{
-    			stationListJSON = '[' +    	
-			'{ "name":"station1" , "uri":"http://somewhere.here1" },' +
-			'{ "name":"station2" , "uri":"http://somewhere.here2" },' +
-			'{ "name":"station3" , "uri":"http://somewhere.here3" }' +
-			' ]';
-		}
-}
-		$(document).ready(function()
-		{
-			if (onState)
+    	var onState = '#onState#';
+    	var radioVolume = '#radioVolume#';
+			var stationListJSON = '#stationListJSON#';
+			
+			$(document).ready(function()
 			{
-				$("#onState").toggleClass("radioOff radioOn");
-			}
-				
-			$(JSON.parse(stationListJSON)).each(function() {  
-         		$("#stationList").append( "<div class='row'><a href='" + this.uri + "'>" + this.name + "</a></div>");
-			});
-    		});
-    	</script>
-    	<style>
+				$("#onStateVal").val(onState);
+				if (onState == "On")
+				{
+					$("#onStateVal").val("WOW");
+					$("#onState").toggleClass("radioOff radioOn");
+					$("#onState").click(function() { 
+						$("#onStateVal").val("Off");
+						radioForm.submit();
+					}); 
+				}
+				else
+				{
+					$("#onState").click(function() { 
+						$("#onStateVal").val("On");
+						radioForm.submit();
+					}); 
+				}
+				$("#volumeSlide").val(radioVolume);
+					
+				$(JSON.parse(stationListJSON)).each(function() {  
+	         		$("#stationList").append( "<div class='row'><a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a></div>");
+				});
+
+				$("#volumeSlide").change(function () { 
+					radioForm.submit();
+				});
+				$("#volumeButton").click(function() { 
+					onStateVal.value="On";
+					volumeSlide.value=100;
+					radioForm.submit();
+				}); 
+				$("#muteButton").click(function() { 
+					$("#onStateVal").val("Off");
+					$("#volumeSlide").val(0);
+					radioForm.submit();
+				}); 
+				$("#prevButton").click(function() { 
+					$("#trackAction").val("prev");
+					radioForm.submit();
+				}); 
+				$("#nextButton").click(function() { 
+					$("#trackAction").val("next");
+					radioForm.submit();
+				}); 
+   		}); //doc ready
+   	</script>
+   	<style>
     	.radioOn {
-    		content:url('img/radioOn.png');
+    		background:url('img/radioOn.png');
     	}
     	.radioOff {
-    		content:url('img/radioOff.png');
+    		background:url('img/radioOff.png');
     	}
-    	</style>
+    	#volumeButton {
+    		background:url('img/volume.png');
+    	}
+    	#muteButton {
+    		background:url('img/mute.png');
+    	}
+			#volumeSlide {
+				width:240px;
+			}
+    	#prevButton {
+    		background:url('img/previous.png');
+  			margin: 0 10 0 100;
+    	}
+    	#nextButton {
+    		background:url('img/previous.png');
+    		margin: 0 100 0 10;
+    		transform: rotate(180deg);
+    	}
+    	.valuePlaceholder {
+    		visibility:hidden;
+    	}
+    	.button {
+			  cursor:pointer;
+			  width: 32px;
+				height: 32px;
+				border: none;
+				background-repeat: no-repeat;
+			}
+   	</style>
   </head>
   <body>
     <div class='main'>
@@ -56,34 +113,54 @@
           </div>
           
           <div class='col-md-8 mainpane'>
-          
+						<form id="radioForm" method="GET" action="settings.htm">       
+           	<input id="onStateVal" name="onStateVal" type="text" class="valuePlaceholder">
+           	<input id="trackAction" name="trackAction" type="text" class="valuePlaceholder">
+           	
             <div class='controlpane'>
-            <div class='row'>
-			<img id="onState" class="radioOff"/>
-            	</div>
-            <div class='row'>
-			  	<div class='title'>
+	            <div class='row'>
+						  	<div class='title'>
                 		Now Playing
-             	 </div>
+             		</div>
               </div>
               
               <div class='row'>
-                TechTalk by Steve
+                #currentTrack#
               </div>
               
               <div class='controls row'>
                 <ul>
-                  <li> << </li>
-                  <li> > </li>
-                  <li> >> </li>
+                  <li>
+										<input type="submit" value="" id="prevButton" class="prevButton button"/>
+            			</li>              		
+                  <li>
+										<input type="submit" value="" id="onState" class="radioOff button"/>
+            			</li>              		
+                  <li>
+										<input type="submit" value="" id="nextButton" class="nextButton button"/>
+            			</li>              		
                 </ul>
               </div>
-              
+              <div class='controls row'>
+                <ul>
+                  <li>
+		            	<input type="submit" value="" id="muteButton" class="muteButton button"/>
+            			</li>              		
+                  <li>
+									<input id="volumeSlide" name="volumeSlide" type="range">									
+            			</li>              		
+                  <li>
+		            	<input type="submit" value="" id="volumeButton" class="volumeButton button"/>
+            			</li>              		
+                </ul>
+              </div>
+
             </div>
             
           </div>
 
         </div>
+
 
       </div>
     </div>
