@@ -1,0 +1,80 @@
+    <script type="text/javascript">
+    	var onState = '#onState#';
+    	var radioVolume = '#radioVolume#';
+			
+			$(document).ready(function()
+			{
+
+				$("#onStateVal").val(onState);
+				if (onState == "On")
+				{
+					$("#onState").toggleClass("radioOff radioOn");
+					$("#onState").click(function() { 
+						$("#onStateVal").val("Off");
+						radioForm.submit();
+					}); 
+				}
+				else
+				{
+					$("#onState").click(function() { 
+						$("#onStateVal").val("On");
+						radioForm.submit();
+					}); 
+				}
+				$("#volumeSlide").val(radioVolume);
+
+				$("#volumeSlide").change(function () { 
+					radioForm.submit();
+				});
+				$("#volumeButton").click(function() { 
+					onStateVal.value="On";
+					volumeSlide.value=100;
+					radioForm.submit();
+				}); 
+				$("#muteButton").click(function() { 
+					$("#onStateVal").val("Off");
+					$("#volumeSlide").val(0);
+					radioForm.submit();
+				}); 
+				$("#prevButton").click(function() { 
+					$("#trackAction").val("prev");
+					radioForm.submit();
+				}); 
+				$("#nextButton").click(function() { 
+					$("#trackAction").val("next");
+					radioForm.submit();
+				}); 
+   		}); //doc ready
+			
+   	</script>
+   	<style>
+    	.radioOn {
+    		background:url('img/radioOn.png');
+    	}
+    	.radioOff {
+    		background:url('img/radioOff.png');
+    	}
+    	#volumeButton {
+    		background:url('img/volume.png');
+    	}
+    	#muteButton {
+    		background:url('img/mute.png');
+    	}
+    	#prevButton {
+    		background:url('img/previous.png');
+    	}
+    	#nextButton {
+    		background:url('img/previous.png');
+    		transform: rotate(180deg);
+    	}
+    	.valuePlaceholder {
+    		visibility:hidden;
+    	}
+    	.button {
+			  cursor:pointer;
+			  width: 32px;
+				height: 32px;
+				border: none;
+				background-repeat: no-repeat;
+			}
+   	</style>

@@ -1,0 +1,41 @@
+						<form id="radioForm" method="GET" action="settings.htm">       
+	           	<input id="onStateVal" name="onStateVal" type="text" class="valuePlaceholder">
+	           	<input id="trackAction" name="trackAction" type="text" class="valuePlaceholder">
+	           	
+	            <div class='controlpane'>
+			            <div class='row'>
+								  	<div class='col-md-8 title'>
+		                		Now Playing
+		             		</div>
+		              </div>
+	              
+	    	          <div class='row'>
+								  	<div class='col-md-8'>
+			                #currentTrack#
+	               		</div>
+		             </div>
+           
+	              <div class='controls row'>
+							  	<div class='col-md-offset-2 col-md-1'>
+										<input type="submit" value="" id="prevButton" class="prevButton button"/>
+            			</div>              		
+							  	<div class='col-md-offset-1 col-md-1'>
+										<input type="submit" value="" id="onState" class="radioOff button"/>
+            			</div>              		
+							  	<div class='col-md-offset-1 col-md-1'>
+										<input type="submit" value="" id="nextButton" class="nextButton button"/>
+            			</div>              		
+                </div>
+	              <div class='controls row'>
+							  	<div class='col-md-1'>
+			            	<input type="submit" value="" id="muteButton" class="muteButton button"/>
+            			</div>
+							  	<div class='col-md-offset-1 col-md-5'>
+										<input id="volumeSlide" name="volumeSlide" type="range">									
+            			</div>
+							  	<div class='col-md-1'>
+			            	<input type="submit" value="" id="volumeButton" class="volumeButton button"/>
+            			</div>
+	              </div>
+	            </div>
+	           </form>
