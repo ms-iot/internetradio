@@ -35,7 +35,7 @@ namespace InternetRadio
 
             if (null == s_webServer)
             {
-                s_webServer = new HttpServer(8000, s_radioManager);
+                s_webServer = new HttpServer(8001, s_radioManager);
                 s_webServer.StartServer();
             }
         }
