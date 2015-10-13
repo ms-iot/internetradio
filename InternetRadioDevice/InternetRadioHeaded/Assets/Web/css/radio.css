@@ -43,13 +43,7 @@
 }
 
 div.controlpane {
-	width: 400px;
 	padding: 60px;
-}
-
-.controlpane div {
-	display: inline-block;
-	width: 100%;
 }
 
 .controlpane textarea {

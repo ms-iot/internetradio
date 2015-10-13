@@ -143,24 +143,11 @@ namespace InternetRadio
                 else if (request.Contains(NavConstants.HOME_PAGE))
                 {
                     // Generate the default config page
-                    string html = await helper.GeneratePage(NavConstants.HOME_PAGE);
+                    string html = await GeneratePageHtml(NavConstants.HOME_PAGE);
                     string onState = (this.radioManager.IsOn == PowerState.Powered) ? "On" : "Off";
-                    StringBuilder stationList = new StringBuilder(@"[");
-                    string trackFormat = "{{ \"name\":\"{0}\" , \"uri\":\"{1}\" }}";
-                    foreach (Track track in this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks)
-                    {
-                        if (stationList.Length > 10)
-                        {
-                            stationList.Append(",");
-                        }
-                        stationList.Append(string.Format(trackFormat, track.Name, track.Address));
-                    }
-
-                    stationList.Append(" ]");
 
                     html = html.Replace("#onState#", onState);
                     html = html.Replace("#radioVolume#", this.radioManager.loadVolume().ToString());
-                    html = html.Replace("#stationListJSON#", stationList.ToString());
                     html = html.Replace("#currentTrack#", this.radioManager.RadioPresetManager.CurrentTrack.Name);
 
                     await WebHelper.WriteToStream(html, os);
@@ -217,6 +204,28 @@ namespace InternetRadio
                     //handle UI interaction
                     await redirectToPage(NavConstants.HOME_PAGE, os);
                 }
+                else if (request.Contains(NavConstants.ADDSTATION_PAGE))
+                {
+                    string html = await GeneratePageHtml(NavConstants.ADDSTATION_PAGE);
+                    await WebHelper.WriteToStream(html, os);
+                }
+                else if (request.Contains(NavConstants.ADDSTATIONSET_PAGE))
+                {
+                    if (!string.IsNullOrEmpty(request))
+                    {
+                        IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
+                        
+                        if (parameters.ContainsKey("name") && !string.IsNullOrWhiteSpace(parameters["name"]))
+                        {
+                            if (parameters.ContainsKey("url") && !string.IsNullOrWhiteSpace(parameters["url"]))
+                            { 
+                                Track newTrack = new Track() { Name = parameters["name"], Address = parameters["url"] };
+                                this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks.Add(newTrack);
+                            }
+                        }
+                    }
+                    await redirectToPage(NavConstants.HOME_PAGE, os);
+                }
                 // Request for a file that is in the Assets\Web folder (e.g. logo, css file)
                 else
                 {
@@ -228,7 +237,7 @@ namespace InternetRadio
                             var folder = Windows.ApplicationModel.Package.Current.InstalledLocation;
 
                             // Map the requested path to Assets\Web folder
-                            string filePath = @"Assets\Web" + request.Replace('/', '\\');
+                            string filePath = NavConstants.ASSETSWEB + request.Replace('/', '\\');
 
                             // Open the file and write it to the stream
                             using (Stream fs = await folder.OpenStreamForReadAsync(filePath))
@@ -286,6 +295,31 @@ namespace InternetRadio
                     StartupTask.WriteTelemetryException(e);
                 }
             }
+        }
+
+        /// <summary>
+        /// Get basic html for requested page, with list of stations populated
+        /// </summary>
+        /// <param name="requestedPage">nav enum ex: home.htm</param>
+        /// <returns>string with full HTML, ready to have items replaced. ex: #onState#</returns>
+        private async Task<string> GeneratePageHtml(string requestedPage)
+        {
+            string html = await helper.GeneratePage(requestedPage);
+            StringBuilder stationList = new StringBuilder(@"[");
+            string trackFormat = "{{ \"name\":\"{0}\" , \"uri\":\"{1}\" }}";
+            foreach (Track track in this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks)
+            {
+                if (stationList.Length > 10)
+                {
+                    stationList.Append(",");
+                }
+                stationList.Append(string.Format(trackFormat, track.Name, track.Address));
+            }
+
+            stationList.Append(" ]");
+
+            html = html.Replace("#stationListJSON#", stationList.ToString());
+            return html;
         }
 
         /// <summary>

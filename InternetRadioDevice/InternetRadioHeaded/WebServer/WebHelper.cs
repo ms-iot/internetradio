@@ -72,7 +72,7 @@ namespace InternetRadio
             string htmlBody = "";
             string htmlHead = "";
 
-            var filePath = string.Format("{0}{1}", NavConstants.ASSETSWEB, page);
+            var filePath = string.Format("{0}\\{1}", NavConstants.ASSETSWEB, page);
             var file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
             if (file != null)
             {
@@ -83,14 +83,14 @@ namespace InternetRadio
             {
                 string pageName = Path.GetFileNameWithoutExtension(page);
 
-                filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "body");
+                filePath = string.Format("{0}\\{1}.{2}", NavConstants.ASSETSWEB, pageName, "body");
                 file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
                 if (file != null)
                 {
 
                     htmlBody = await FileIO.ReadTextAsync(file);
                 }
-                filePath = string.Format("{0}{1}.{2}", NavConstants.ASSETSWEB, pageName, "head");
+                filePath = string.Format("{0}\\{1}.{2}", NavConstants.ASSETSWEB, pageName, "head");
                 file = (IStorageFile)await this.InstallFolder.TryGetItemAsync(filePath);
                 if (file != null)
                 {

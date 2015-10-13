@@ -1,22 +1,49 @@
-﻿<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>#title#</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="Stylesheet" href="css/common.css" />
+<html>
+  <head>
+    <link href='http://ms-iot.github.io/content/css/bootstrap.css' rel='stylesheet' />
+    <link href='css/radio.css' rel='stylesheet' />
+    <title> Internet Radio - Main Page </title>
 		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
-    #head#
-</head>
-<body>
-    <div id="navigationBar">
-        #navBar#
+		<script type="text/javascript">
+			var stationListJSON = '#stationListJSON#';
+			function PopulateStationList () {
+				$(JSON.parse(stationListJSON)).each(function() {  
+	         		$("#stationList").append( "<div class='row'><a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a></div>");
+				});
+			}
+			
+			$(document).ready(function()
+			{
+				PopulateStationList();					
+			});
+		</script>
+		#head#
+  </head>
+  <body>
+    <div class='main'>
+      <div class='container'>
+        <div class='row'>
+          <div class='col-md-12 headerbar'>
+            #title#
+          </div>
+        </div>
+        <div class='row'>
+                  
+          <div name="stationList" id="stationList" class='col-md-4 listpane'>
+          
+            <div class='row selected'>
+              <a href='addstation.htm'> + Add Station </a>
+            </div>
+            
+          </div>
+          
+          <div class='col-md-8 mainpane'>
+          	#content#
+          </div>
+        </div>
+
+
+      </div>
     </div>
-    <div id="headerLogo"><img src="img/logo.png" /></div>
-    <div id="titleBar"><p id="pageName">#titleBar#</p></div>
-    <div id="content">
-        #message#
-        #content#
-    </div>
-</body>
+  </body>
 </html>

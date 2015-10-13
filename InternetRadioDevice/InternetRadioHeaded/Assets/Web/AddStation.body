@@ -1,0 +1,33 @@
+						<form id="radioForm" method="GET" action="addstationset.htm">                 
+	            <div class='controlpane'>
+		            <div class='row'>
+							  	<div class='col-md-8 title'>
+		                Add New Station
+		              </div>
+                </div>
+	              <div class='controls row'>
+                  <div class='col-md-3'>
+  			              Station Name
+  			          </div>
+                  <div class='col-md-9'>
+  							      <input type="text" name='name'/>
+  			          </div>
+                </div>
+	              <div class='controls row'>
+                  <div class='col-md-3'>
+                			Station URL
+  			          </div>
+                  <div class='col-md-9'>
+	                  	<input type="text" name='url'/>
+  			          </div>
+	              </div>
+	              <div class='controls row'>
+                  <div class='col-md-3'>
+			                <input type='submit' value='Add Station'/>
+  			          </div>
+                  <div class='col-md-3'>
+      			          <button onclick="javascript:window.location='home.htm';return false;">Cancel</button>
+  			          </div>
+	          	  </div>
+	            </div>
+						</form>
