@@ -23,15 +23,41 @@ namespace InternetRadio
         private uint playbackRetries;
         private const uint maxRetries = 3;
 
-        public PowerState IsOn
+        public double Volume
         {
             get
             {
-                return this.radioPowerManager.PowerState;
+                return this.radioPlaybackManager.Volume;
             }
             set
             {
-                this.radioPowerManager.PowerState = value;
+                this.radioPlaybackManager.Volume = value;
+            }
+        }
+
+        public PlaybackState PlayState
+        {
+            get
+            {
+                return this.radioPlaybackManager.PlaybackState;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case PlaybackState.Paused:
+                        if (this.radioPlaybackManager.PlaybackState == PlaybackState.Playing)
+                        {
+                            this.radioPlaybackManager.Pause();
+                        }
+                        break;
+                    case PlaybackState.Playing:
+                        if (null != this.radioPresetManager.CurrentTrack)
+                        { 
+                            this.radioPlaybackManager.Play(new Uri(this.radioPresetManager.CurrentTrack.Address));
+                        }
+                        break;
+                }
             }
         }
 
