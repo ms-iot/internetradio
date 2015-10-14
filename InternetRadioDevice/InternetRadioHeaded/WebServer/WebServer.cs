@@ -144,7 +144,7 @@ namespace InternetRadio
                 {
                     // Generate the default config page
                     string html = await GeneratePageHtml(NavConstants.HOME_PAGE);
-                    string onState = (this.radioManager.IsOn == PowerState.Powered) ? "On" : "Off";
+                    string onState = (this.radioManager.PlayState == PlaybackState.Playing) ? "On" : "Off";
 
                     html = html.Replace("#onState#", onState);
                     html = html.Replace("#radioVolume#", this.radioManager.loadVolume().ToString());
@@ -167,20 +167,23 @@ namespace InternetRadio
                             switch (parameters[settingParam])
                             {
                                 case "On":
-                                    this.radioManager.IsOn = PowerState.Powered;
+                                    this.radioManager.PlayState = PlaybackState.Playing;
                                     break;
                                 case "Off":
-                                    this.radioManager.IsOn = PowerState.Standby;
+                                    this.radioManager.PlayState = PlaybackState.Paused;
                                     break;
                             }
                         }
                         settingParam = "volumeSlide";
                         if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
                         {
-                            double newVolume = this.radioManager.loadVolume();
+                            double newVolume = this.radioManager.Volume;
                             if (double.TryParse(parameters[settingParam], out newVolume))
                             {
-                                this.radioManager.saveVolume(newVolume);
+                                if (newVolume >= 0 && newVolume <= 100)
+                                {
+                                    this.radioManager.Volume = newVolume;
+                                }
                             }
                         }
                         settingParam = "trackAction";
@@ -214,11 +217,11 @@ namespace InternetRadio
                     if (!string.IsNullOrEmpty(request))
                     {
                         IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
-                        
+
                         if (parameters.ContainsKey("name") && !string.IsNullOrWhiteSpace(parameters["name"]))
                         {
                             if (parameters.ContainsKey("url") && !string.IsNullOrWhiteSpace(parameters["url"]))
-                            { 
+                            {
                                 Track newTrack = new Track() { Name = parameters["name"], Address = parameters["url"] };
                                 this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks.Add(newTrack);
                             }
