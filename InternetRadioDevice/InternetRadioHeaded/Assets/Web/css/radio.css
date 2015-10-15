@@ -1,76 +1,36 @@
-.main {
-	background-color: #E6E6E6;
-	height: 100%;
-	width: 100%;
-	margin: 0;
-	padding: 20px;
-}
-
-.container {
-	background-color: #FFFFFF;
-	min-height: 720px;
-}
-
-.headerbar {
-	background-color: #CCCCCC;
-	color: #000000;
-	height: 60px;
-	font-size: 34px;
-	line-height: 40px;
-	padding: 10px;
-}
-
-.listpane {
-	background-color: #F2F2F2;
-	color: #000000;
-	font-size: 24px;
-	line-height: 28px;
-	min-height: 660px;
-}
-
-
-.listpane .row {
-	margin: 20px 10px 10px 20px;
-}
-
-.listpane .selected a{
-	font-weight: 700;
-}
-
-.listpane a{
-	text-decoration: none;
-	color: inherit;
-}
-
-div.controlpane {
-	padding: 60px;
-}
-
-.controlpane textarea {
-	width: 100%;
-	line-height: 20px;
-	margin-top: 10px;
-}
-
-.controls ul {
-	list-style-type: none;
-	padding: 0;
-	width: 400px;
-}
-
-.controls ul li {
-	display:inline-block;
-}
-
-
-.title {
-	font-size: 24px;
-	line-height: 28px;
-	margin-bottom: 10px;
-	font-weight: 700;
-}
-
-.controls {
-	margin-top: 20px;
-	margin-left: 20px;
-}
+    	.radioOn {
+    		background:url('../img/radioOn.png');
+    	}
+    	.radioOff {
+    		background:url('../img/radioOff.png');
+    	}
+    	.volumeButton {
+    		background:url('../img/volume.png');
+    	}
+    	.muteButton {
+    		background:url('../img/mute.png');
+    	}
+    	.prevButton {
+    		background:url('../img/previous.png');
+    	}
+    	.nextButton {
+    		background:url('../img/previous.png');
+    		transform: rotate(180deg);
+    	}
+    	.valuePlaceholder {
+    		visibility:hidden;
+    	}
+    	.radioButton {
+			  cursor:pointer;
+			  width: 32px;
+				height: 32px;
+				border: none;
+				background-repeat: no-repeat;
+			}
+			.radioButton:hover {
+			  opacity:0.4;
+			  transition: opacity .2s ease-out;
+			  -moz-transition: opacity .2s ease-out;
+			  -webkit-transition: opacity .2s ease-out;
+			  -o-transition: opacity .2s ease-out;
+			}

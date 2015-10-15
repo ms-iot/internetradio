@@ -100,19 +100,22 @@ namespace InternetRadio
                     string[] requestMethodParts = requestMethod.Split(' ');
 
                     // Process the request and write a response to send back to the browser
-                    if (requestMethodParts[0] == "GET")
+                    if (requestMethodParts[0].ToUpper() == "GET")
                     {
+                        Debug.WriteLine("request for: {0}", requestMethodParts[1]);
                         await writeResponseAsync(requestMethodParts[1], output, socket.Information);
                     }
                     else if (requestMethodParts[0].ToUpper() == "POST")
                     {
-                        string requestUri = string.Format("{0}?{1}", requestMethodParts[1], requestParts[14]);
+                        string requestUri = string.Format("{0}?{1}", requestMethodParts[1], requestParts[requestParts.Length-1]);
                         Debug.WriteLine("POST request for: {0} ", requestUri);
                         await writeResponseAsync(requestUri, output, socket.Information);
                     }
                     else
+                    {
                         throw new InvalidDataException("HTTP method not supported: "
                                                        + requestMethodParts[0]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -132,6 +135,8 @@ namespace InternetRadio
         {
             try
             {
+                request = request.TrimEnd('\0'); //remove possible null from POST request
+
                 string[] requestParts = request.Split('/');
 
                 // Request for the root page, so redirect to home page
@@ -245,11 +250,20 @@ namespace InternetRadio
                             // Open the file and write it to the stream
                             using (Stream fs = await folder.OpenStreamForReadAsync(filePath))
                             {
+                                string contentType = "";
+                                if (request.Contains("css"))
+                                {
+                                    contentType = "Content-Type: text/css\r\n";
+                                }
+                                if (request.Contains("htm"))
+                                {
+                                    contentType = "Content-Type: text/html\r\n";
+                                }
                                 string header = String.Format("HTTP/1.1 200 OK\r\n" +
                                                 "Content-Length: {0}\r\n{1}" +
                                                 "Connection: close\r\n\r\n",
                                                 fs.Length,
-                                                ((request.Contains("css")) ? "Content-Type: text/css\r\n" : ""));
+                                                contentType);
                                 byte[] headerArray = Encoding.UTF8.GetBytes(header);
                                 await resp.WriteAsync(headerArray, 0, headerArray.Length);
                                 await fs.CopyToAsync(resp);

@@ -1,19 +1,26 @@
-<html>
-  <head>
-    <link href='http://ms-iot.github.io/content/css/bootstrap.css' rel='stylesheet' />
-    <link href='css/radio.css' rel='stylesheet' />
-    <title> Internet Radio - Main Page </title>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<link rel="Stylesheet" href='http://ms-iot.github.io/content/css/bootstrap.css' />
+		<link rel="Stylesheet" href="css/common.css" />
+		<link rel="Stylesheet" href="css/slider.css" />
+		<link rel="Stylesheet" href='css/radio.css' />
+	  <title> Internet Radio - Main Page </title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
 		<script type="text/javascript">
 			var stationListJSON = '#stationListJSON#';
+			var currentStation = '#currentTrack#';
 			function PopulateStationList () {
 				$(JSON.parse(stationListJSON)).each(function() {  
-	         		$("#stationList").append( "<div class='row'><a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a></div>");
+         		$("#stationList").append( "<div class='row" + ((this.name == currentStation)?" selected":"") + "'><a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a></div>");								
 				});
 			}
 			
 			$(document).ready(function()
 			{
+				$("#javascriptWarn").hide();
 				PopulateStationList();					
 			});
 		</script>
@@ -30,19 +37,24 @@
         <div class='row'>
                   
           <div name="stationList" id="stationList" class='col-md-4 listpane'>
-          
-            <div class='row selected'>
+            <div class='row action'>
               <a href='addstation.htm'> + Add Station </a>
-            </div>
-            
+            </div>            
           </div>
           
           <div class='col-md-8 mainpane'>
-          	#content#
+          	<div class='row'>
+	          	<div id='javascriptWarn' class='col-md-offset-3 col-md-6 center'>
+	          		Enable Javascript for this page to function properly.
+	          	</div>
+          	</div>
+          	<div class='row'>
+	          	<div class='col-md-12 content'>
+		          	#content#
+	          	</div>
+          	</div>
           </div>
         </div>
-
-
       </div>
     </div>
   </body>
