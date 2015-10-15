@@ -33,6 +33,7 @@ namespace InternetRadio
                 await s_radioManager.RadioPresetManager.StartNewPlaylist("Default", stationList, false);
             }
 
+            /// Todo: make webserver a manager inside Radio Manager, following model of AllJoyn and GPIO managers.
             if (null == s_webServer)
             {
                 s_webServer = new HttpServer(8001, s_radioManager);
