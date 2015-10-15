@@ -152,7 +152,7 @@ namespace InternetRadio
                     string onState = (this.radioManager.PlayState == PlaybackState.Playing) ? "On" : "Off";
 
                     html = html.Replace("#onState#", onState);
-                    html = html.Replace("#radioVolume#", this.radioManager.loadVolume().ToString());
+                    html = html.Replace("#radioVolume#", (this.radioManager.Volume * 100).ToString());
                     html = html.Replace("#currentTrack#", this.radioManager.RadioPresetManager.CurrentTrack.Name);
 
                     await WebHelper.WriteToStream(html, os);
@@ -173,9 +173,11 @@ namespace InternetRadio
                             {
                                 case "On":
                                     this.radioManager.PlayState = PlaybackState.Playing;
+                                    while (this.radioManager.PlayState != PlaybackState.Playing) ;
                                     break;
                                 case "Off":
                                     this.radioManager.PlayState = PlaybackState.Paused;
+                                    while (this.radioManager.PlayState != PlaybackState.Paused) ;
                                     break;
                             }
                         }
@@ -185,7 +187,8 @@ namespace InternetRadio
                             double newVolume = this.radioManager.Volume;
                             if (double.TryParse(parameters[settingParam], out newVolume))
                             {
-                                if (newVolume >= 0 && newVolume <= 100)
+                                newVolume = Math.Round(newVolume /100, 2);
+                                if (newVolume >= 0 && newVolume <= 1)
                                 {
                                     this.radioManager.Volume = newVolume;
                                 }

@@ -46,13 +46,13 @@ namespace InternetRadio
                 switch (value)
                 {
                     case PlaybackState.Paused:
-                        if (this.radioPlaybackManager.PlaybackState == PlaybackState.Playing)
+                        if (this.radioPlaybackManager.PlaybackState != PlaybackState.Paused)
                         {
                             this.radioPlaybackManager.Pause();
                         }
                         break;
                     case PlaybackState.Playing:
-                        if (null != this.radioPresetManager.CurrentTrack)
+                        if (null != this.radioPresetManager.CurrentTrack && this.radioPlaybackManager.PlaybackState != PlaybackState.Playing)
                         { 
                             this.radioPlaybackManager.Play(new Uri(this.radioPresetManager.CurrentTrack.Address));
                         }
