@@ -63,6 +63,11 @@ namespace InternetRadio
 
                     break;
 
+                case MediaState.Stopped:
+                    this.PlaybackState = PlaybackState.Paused;
+
+                    break;
+
                 case MediaState.Playing:
                     this.PlaybackState = PlaybackState.Playing;
                     break;
@@ -99,6 +104,7 @@ namespace InternetRadio
         public void Pause()
         {
             this.mediaEngine.Pause();
+            this.PlaybackState = PlaybackState.Paused;
         }
 
         public void Stop()
