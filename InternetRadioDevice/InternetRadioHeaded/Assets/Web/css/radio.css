@@ -1,5 +1,5 @@
     	.radioOn {
-    		background:url('../img/radioOn.png');
+    		background:url('../img/radioOn.png');    		
     	}
     	.radioOff {
     		background:url('../img/radioOff.png');
@@ -21,16 +21,20 @@
     		visibility:hidden;
     	}
     	.radioButton {
+			  opacity:0.2;
 			  cursor:pointer;
 			  width: 32px;
 				height: 32px;
 				border: none;
 				background-repeat: no-repeat;
 			}
-			.radioButton:hover {
-			  opacity:0.4;
-			  transition: opacity .2s ease-out;
-			  -moz-transition: opacity .2s ease-out;
-			  -webkit-transition: opacity .2s ease-out;
-			  -o-transition: opacity .2s ease-out;
+    	.radioButton.enabled {
+			  opacity:0.55;
+			}
+			.radioButton.enabled:hover {
+			  opacity:1;
+			  transition: opacity .2s ease-in;
+			  -moz-transition: opacity .2s ease-in;
+			  -webkit-transition: opacity .2s ease-in;
+			  -o-transition: opacity .2s ease-in;
 			}
