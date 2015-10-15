@@ -2,6 +2,28 @@ html,body {
 	height:100%;
 	width:100%;
 }
+
+#stationList {
+	padding:0;
+	margin:0;
+}
+
+#stationList > .row {
+	margin: 0;
+	padding: 10px 0px 10px 25px;
+    font-size: 18px;
+}
+
+
+#stationList  .row:hover {
+ background-color: #E6E6E6 !important;
+ cursor: pointer;
+}
+
+.controlpane{
+    width: 600px; 
+    margin: auto;
+}
  
 body {
 	font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
@@ -14,17 +36,20 @@ body {
 	padding: 20px;
 }
 .button {
+	background-color: #CCCCCC;
 	font-size:20;
-	display: flex;
   align-items: center;
   justify-content: center;
   border:none;
-	text-transform: lowercase;
-	margin: 0 auto;
+	margin: 20px;
+	padding: 10px;
+	min-width:100px; 
+	text-align: center;
 }
 .button:hover {
-    background:linear-gradient(90deg, #32bdfe, #65daf4);
-    color:#E6E6E6;
+    background-color:#E6E6E6;
+    color:black;
+    cursor: pointer;
 }
 .container {
 	background-color: #FFFFFF;
@@ -56,17 +81,8 @@ body {
 .listpane .selected {
 	width:100%;
 	font-weight: 500;
-	background:linear-gradient(90deg, #32bdfe, #CCCCCC);
+	background-color:#CCCCCC;
 	color:#000000;
-}
-.listpane .row:hover {
-  opacity:0.4;
-  transition: opacity .2s ease-out;
-  -moz-transition: opacity .2s ease-out;
-  -webkit-transition: opacity .2s ease-out;
-  -o-transition: opacity .2s ease-out;
-  background:linear-gradient(90deg, #32bdfe, #65daf4);
-  color:#E6E6E6;
 }
 
 .listpane .action {
@@ -104,8 +120,8 @@ div.controlpane {
 
 
 .title {
-	font-size: 24px;
-	line-height: 28px;
+	font-size: 18px;
+	line-height: 22px;
 	margin-bottom: 10px;
 	font-weight: 700;
 }
