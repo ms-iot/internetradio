@@ -47,34 +47,3 @@
    		}); //doc ready
 			
    	</script>
-   	<style>
-    	.radioOn {
-    		background:url('img/radioOn.png');
-    	}
-    	.radioOff {
-    		background:url('img/radioOff.png');
-    	}
-    	#volumeButton {
-    		background:url('img/volume.png');
-    	}
-    	#muteButton {
-    		background:url('img/mute.png');
-    	}
-    	#prevButton {
-    		background:url('img/previous.png');
-    	}
-    	#nextButton {
-    		background:url('img/previous.png');
-    		transform: rotate(180deg);
-    	}
-    	.valuePlaceholder {
-    		visibility:hidden;
-    	}
-    	.button {
-			  cursor:pointer;
-			  width: 32px;
-				height: 32px;
-				border: none;
-				background-repeat: no-repeat;
-			}
-   	</style>

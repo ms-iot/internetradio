@@ -1,7 +1,125 @@
-body {
-    font-family: 'Segoe UI';
-    margin:0px;
+html,body { 
+	height:100%;
+	width:100%;
 }
+ 
+body {
+	font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+.main {
+	background-color: #E6E6E6;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 20px;
+}
+.button {
+	font-size:20;
+	display: flex;
+  align-items: center;
+  justify-content: center;
+  border:none;
+	text-transform: lowercase;
+	margin: 0 auto;
+}
+.button:hover {
+    background:linear-gradient(90deg, #32bdfe, #65daf4);
+    color:#E6E6E6;
+}
+.container {
+	background-color: #FFFFFF;
+	min-height: 720px;
+}
+
+.headerbar {
+	background-color: #CCCCCC;
+	color: #000000;
+	height: 60px;
+	font-size: 34px;
+	line-height: 40px;
+	padding: 10px;
+}
+
+.listpane {
+	background-color: #F2F2F2;
+	color: #000000;
+	font-size: 24px;
+	line-height: 28px;
+	min-height: 660px;
+}
+
+
+.listpane .row {
+	margin: 20px 10px 10px 20px;
+}
+
+.listpane .selected {
+	width:100%;
+	font-weight: 500;
+	background:linear-gradient(90deg, #32bdfe, #CCCCCC);
+	color:#000000;
+}
+.listpane .row:hover {
+  opacity:0.4;
+  transition: opacity .2s ease-out;
+  -moz-transition: opacity .2s ease-out;
+  -webkit-transition: opacity .2s ease-out;
+  -o-transition: opacity .2s ease-out;
+  background:linear-gradient(90deg, #32bdfe, #65daf4);
+  color:#E6E6E6;
+}
+
+.listpane .action {
+	font-weight: 700;
+}
+
+.listpane a{
+	text-decoration: none;
+	color: inherit;
+}
+
+div.introduction {
+	padding: 60px 0px 0px 0px;
+}
+
+div.controlpane {
+	padding: 60px 0px 0px 0px;
+}
+
+.controlpane textarea {
+	width: 100%;
+	line-height: 20px;
+	margin-top: 10px;
+}
+
+.controls ul {
+	list-style-type: none;
+	padding: 0;
+	width: 400px;
+}
+
+.controls ul li {
+	display:inline-block;
+}
+
+
+.title {
+	font-size: 24px;
+	line-height: 28px;
+	margin-bottom: 10px;
+	font-weight: 700;
+}
+
+.controls {
+	width:60%;
+	margin-top: 20px;
+	margin-left: 20px;
+}
+.center {
+	text-align:center;
+}
+
+
 
 #commonContent {
     color:#018bcb;
