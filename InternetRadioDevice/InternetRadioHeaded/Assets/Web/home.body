@@ -29,13 +29,13 @@
 	                </div>
 		              <div class='row'>
 								  	<div class='col-md-1'>
-				            	<input type="submit" value="" id="muteButton" class="muteButton radioButton"/>
+				            	<input type="submit" value="" id="muteButton" class="muteButton radioButton enabled"/>
 	            			</div>
 								  	<div class='col-md-10'>
 											<input id="volumeSlide" name="volumeSlide" type="range">									
 	            			</div>
 								  	<div class='col-md-1'>
-				            	<input type="submit" value="" id="volumeButton" class="volumeButton radioButton"/>
+				            	<input type="submit" value="" id="volumeButton" class="volumeButton radioButton enabled"/>
 	            			</div>
 		              </div>
 		            </div>

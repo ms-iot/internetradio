@@ -49,8 +49,11 @@ namespace InternetRadio
             }
             internal set
             {
-                this.state = value;
-                this.PlaybackStateChanged(this, new PlaybackStateChangedEventArgs() { State = this.state });
+                if (this.state != value)
+                {
+                    this.state = value;
+                    this.PlaybackStateChanged(this, new PlaybackStateChangedEventArgs() { State = this.state });
+                }
             }
         }
 
@@ -89,7 +92,7 @@ namespace InternetRadio
             if (result == MediaEngineInitializationResult.Fail)
             {
                 StartupTask.WriteTelemetryEvent("MediaEngine_FailedToInitialize");
-                
+
             }
 
             this.mediaEngine.MediaStateChanged += MediaEngine_MediaStateChanged;
