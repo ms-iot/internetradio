@@ -1,9 +1,18 @@
     <script type="text/javascript">
     	var onState = '#onState#';
     	var radioVolume = '#radioVolume#';
+			var sliding = false;
 			
 			$(document).ready(function()
 			{
+				if (stationListJSON.length > 1)
+				{
+					$(".prevButton,.nextButton").addClass("enabled");
+				}
+				if (currentStation)
+				{
+					$("#onState").addClass("enabled");
+				}
 
 				$("#onStateVal").val(onState);
 				if (onState == "On")
@@ -21,11 +30,25 @@
 						radioForm.submit();
 					}); 
 				}
+				
 				$("#volumeSlide").val(radioVolume);
-
-				$("#volumeSlide").change(function () { 
-					radioForm.submit();
+				$("#volumeSlide").mousedown(function () { 
+					sliding = true;
 				});
+				$("#volumeSlide").mouseup(function () { 
+					sliding = false;
+					if ($("#volumeSlide").val() != radioVolume)
+					{
+						radioForm.submit();
+					}
+				});
+				$("#volumeSlide").change(function () { 
+					if (!sliding)
+					{
+						radioForm.submit();
+					}
+				});
+
 				$("#volumeButton").click(function() { 
 					onStateVal.value="On";
 					volumeSlide.value=100;

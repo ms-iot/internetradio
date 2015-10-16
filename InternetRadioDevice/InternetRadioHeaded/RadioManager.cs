@@ -19,47 +19,16 @@ namespace InternetRadio
         private AllJoynInterfaceManager allJoynInterfaceManager;
         private GpioInterfaceManager gpioInterfaceManager;
         private AppServicesInterfaceManager appServicesInterfaceManager;
+        private HttpServer httpServer;
 
         private uint playbackRetries;
         private const uint maxRetries = 3;
 
-        public double Volume
+        private static readonly Track DefaultStation = new Track()
         {
-            get
-            {
-                return this.radioPlaybackManager.Volume;
-            }
-            set
-            {
-                this.radioPlaybackManager.Volume = value;
-            }
-        }
-
-        public PlaybackState PlayState
-        {
-            get
-            {
-                return this.radioPlaybackManager.PlaybackState;
-            }
-            set
-            {
-                switch (value)
-                {
-                    case PlaybackState.Paused:
-                        if (this.radioPlaybackManager.PlaybackState != PlaybackState.Paused)
-                        {
-                            this.radioPlaybackManager.Pause();
-                        }
-                        break;
-                    case PlaybackState.Playing:
-                        if (null != this.radioPresetManager.CurrentTrack && this.radioPlaybackManager.PlaybackState != PlaybackState.Playing)
-                        { 
-                            this.radioPlaybackManager.Play(new Uri(this.radioPresetManager.CurrentTrack.Address));
-                        }
-                        break;
-                }
-            }
-        }
+            Address = @"http://video.ch9.ms/ch9/debd/54ebcbdf-d688-43fc-97ef-cb83162bdebd/2-724.mp3",
+            Name = "CH 9: Build 2015 Presentation"
+        };
 
         internal IPlaylistManager RadioPresetManager
         {
@@ -120,6 +89,7 @@ namespace InternetRadio
             else
             {
                 telemetryInitializeProperties.Add("FirstBoot", true.ToString());
+                this.radioPlaybackManager.Volume = .25;
             }
 
             if (this.radioPresetManager.CurrentPlaylist == null)
@@ -144,6 +114,16 @@ namespace InternetRadio
 
             // Wake up the radio
             this.radioPowerManager.PowerState = PowerState.Powered;
+
+            // Start Webservice
+            this.httpServer = new HttpServer(8001, this.radioPlaybackManager, this.radioPresetManager, this.radioPowerManager);
+
+            if (this.RadioPresetManager.CurrentPlaylist.Tracks.Count <= 0)
+            {
+                this.RadioPresetManager.CurrentPlaylist.Tracks.Add(DefaultStation);
+            }
+
+            this.httpServer.StartServer();
 
             StartupTask.WriteTelemetryEvent("App_Initialize", telemetryInitializeProperties);
         }
@@ -181,6 +161,7 @@ namespace InternetRadio
 
         private async void RadioPlaybackManager_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
         {
+            Debug.WriteLine(string.Format("playbackstate changed: {0}", e.State.ToString()));
             switch(e.State)
             {
                 case PlaybackState.Error_MediaInvalid:

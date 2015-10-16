@@ -11,11 +11,6 @@ namespace InternetRadio
     {
         private static TelemetryClient s_telemetryClient;
         internal static RadioManager s_radioManager;
-        private static HttpServer s_webServer;
-        private static readonly Track DefaultStation = new Track() {
-            Address = @"http://video.ch9.ms/ch9/debd/54ebcbdf-d688-43fc-97ef-cb83162bdebd/2-724.mp3",
-            Name = "CH 9: Build 2015 Presentation"
-        };
 
         public static async void Start()
         {
@@ -28,23 +23,12 @@ namespace InternetRadio
             {
                 s_radioManager = new RadioManager();
                 await s_radioManager.Initialize();
-                List<Track> stationList = new List<Track>();
-                stationList.Add(DefaultStation);
-                await s_radioManager.RadioPresetManager.StartNewPlaylist("Default", stationList, false);
-            }
-
-            /// Todo: make webserver a manager inside Radio Manager, following model of AllJoyn and GPIO managers.
-            if (null == s_webServer)
-            {
-                s_webServer = new HttpServer(8001, s_radioManager);
-                s_webServer.StartServer();
             }
         }
 
         public static async void stop()
         {
             await s_radioManager.Dispose();
-            s_webServer.Dispose();
         }
 
         public static void WriteTelemetryEvent(string eventName)

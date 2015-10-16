@@ -29,15 +29,20 @@ namespace InternetRadio
         private int port = 8000;
         private readonly StreamSocketListener listener;
         private WebHelper helper;
-        private RadioManager radioManager;
+        private IPlaybackManager playbackManager;
+        private IPlaylistManager playlistManager;
+        private IDevicePowerManager powerManager;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="serverPort">Port to start server on</param>
-        internal HttpServer(int serverPort, RadioManager radioManager)
+        internal HttpServer(int serverPort, IPlaybackManager playbackManager, IPlaylistManager playlistManager, IDevicePowerManager powerManager)
         {
-            this.radioManager = radioManager;
+            this.playbackManager = playbackManager;
+            this.playlistManager = playlistManager;
+            this.powerManager = powerManager;
+
             helper = new WebHelper();
             listener = new StreamSocketListener();
             port = serverPort;
@@ -107,7 +112,7 @@ namespace InternetRadio
                     }
                     else if (requestMethodParts[0].ToUpper() == "POST")
                     {
-                        string requestUri = string.Format("{0}?{1}", requestMethodParts[1], requestParts[requestParts.Length-1]);
+                        string requestUri = string.Format("{0}?{1}", requestMethodParts[1], requestParts[requestParts.Length - 1]);
                         Debug.WriteLine("POST request for: {0} ", requestUri);
                         await writeResponseAsync(requestUri, output, socket.Information);
                     }
@@ -149,11 +154,11 @@ namespace InternetRadio
                 {
                     // Generate the default config page
                     string html = await GeneratePageHtml(NavConstants.HOME_PAGE);
-                    string onState = (this.radioManager.PlayState == PlaybackState.Playing) ? "On" : "Off";
+                    string onState = (this.playbackManager.PlaybackState == PlaybackState.Playing) ? "On" : "Off";
 
                     html = html.Replace("#onState#", onState);
-                    html = html.Replace("#radioVolume#", (this.radioManager.Volume * 100).ToString());
-                    html = html.Replace("#currentTrack#", this.radioManager.RadioPresetManager.CurrentTrack.Name);
+                    html = html.Replace("#radioVolume#", (this.playbackManager.Volume * 100).ToString());
+                    html = html.Replace("#currentTrack#", this.playlistManager.CurrentTrack.Name);
 
                     await WebHelper.WriteToStream(html, os);
 
@@ -165,6 +170,9 @@ namespace InternetRadio
                     {
                         string settingParam = "";
                         IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
+                        bool waitForPlaying = (this.playbackManager.PlaybackState == PlaybackState.Playing);
+                        bool waitForTrackChange = false;
+                        string trackName = this.playlistManager.CurrentTrack.Name;
 
                         settingParam = "onStateVal";
                         if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
@@ -172,44 +180,64 @@ namespace InternetRadio
                             switch (parameters[settingParam])
                             {
                                 case "On":
-                                    this.radioManager.PlayState = PlaybackState.Playing;
-                                    while (this.radioManager.PlayState != PlaybackState.Playing) ;
+                                    this.playbackManager.Play(new Uri(this.playlistManager.CurrentTrack.Address));
+                                    waitForPlaying = true;
                                     break;
                                 case "Off":
-                                    this.radioManager.PlayState = PlaybackState.Paused;
-                                    while (this.radioManager.PlayState != PlaybackState.Paused) ;
+                                    this.playbackManager.Pause();
+                                    waitForPlaying = false;
                                     break;
                             }
                         }
                         settingParam = "volumeSlide";
                         if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
                         {
-                            double newVolume = this.radioManager.Volume;
+                            double newVolume = this.playbackManager.Volume;
                             if (double.TryParse(parameters[settingParam], out newVolume))
                             {
-                                newVolume = Math.Round(newVolume /100, 2);
+                                newVolume = Math.Round(newVolume / 100, 2);
                                 if (newVolume >= 0 && newVolume <= 1)
                                 {
-                                    this.radioManager.Volume = newVolume;
+                                    this.playbackManager.Volume = newVolume;
                                 }
                             }
                         }
                         settingParam = "trackAction";
                         if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
                         {
+                            waitForPlaying = true;
+                            waitForTrackChange = true;
+                            this.playbackManager.Pause();
                             switch (parameters[settingParam])
                             {
                                 case "prev":
-                                    this.radioManager.RadioPresetManager.PreviousTrack();
+                                    this.playlistManager.PreviousTrack();
                                     break;
                                 case "next":
-                                    this.radioManager.RadioPresetManager.NextTrack();
+                                    this.playlistManager.NextTrack();
                                     break;
                                 case "track":
                                     if (parameters.ContainsKey("trackName") && !string.IsNullOrWhiteSpace(parameters["trackName"]))
-                                        this.radioManager.RadioPresetManager.PlayTrack(parameters["trackName"]);
+                                    {
+                                        waitForTrackChange = false;
+                                        trackName = parameters["trackName"];
+                                        this.playlistManager.PlayTrack(trackName);
+                                    }
                                     break;
                             }
+                        }
+
+                        DateTime timeOut = DateTime.Now.AddSeconds(30);
+                        while (DateTime.Now.CompareTo(timeOut) < 0 && (
+                            (this.playbackManager.PlaybackState == PlaybackState.Playing) != waitForPlaying
+                            || (this.playlistManager.CurrentTrack.Name != trackName) != waitForTrackChange
+                            ))
+                        {
+                            Debug.WriteLine("Waiting on State: playback={0}; trackname={1}", this.playbackManager.PlaybackState, trackName);
+                        }
+                        if (DateTime.Now.CompareTo(timeOut) >= 0)
+                        {
+                            Debug.WriteLine("track did not start playing in time limit");
                         }
                     }
                     //handle UI interaction
@@ -231,7 +259,7 @@ namespace InternetRadio
                             if (parameters.ContainsKey("url") && !string.IsNullOrWhiteSpace(parameters["url"]))
                             {
                                 Track newTrack = new Track() { Name = parameters["name"], Address = parameters["url"] };
-                                this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks.Add(newTrack);
+                                this.playlistManager.CurrentPlaylist.Tracks.Add(newTrack);
                             }
                         }
                     }
@@ -327,7 +355,7 @@ namespace InternetRadio
             string html = await helper.GeneratePage(requestedPage);
             StringBuilder stationList = new StringBuilder(@"[");
             string trackFormat = "{{ \"name\":\"{0}\" , \"uri\":\"{1}\" }}";
-            foreach (Track track in this.radioManager.RadioPresetManager.CurrentPlaylist.Tracks)
+            foreach (Track track in this.playlistManager.CurrentPlaylist.Tracks)
             {
                 if (stationList.Length > 10)
                 {
