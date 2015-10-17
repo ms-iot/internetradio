@@ -8,6 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+            <Button Name="refreshButton" Click="refreshButton_Click" Margin="10, 5" VerticalAlignment="Top" Width="100" Height="30" Content="Refresh"/>
+            <WebView Name="webView" Margin="10, 40, 10, 10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Page>

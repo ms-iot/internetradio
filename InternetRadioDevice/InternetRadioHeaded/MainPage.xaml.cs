@@ -22,9 +22,17 @@ namespace InternetRadio
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private static Uri RadioUri = new Uri(@"http://localhost:8001");
+
         public MainPage()
         {
             this.InitializeComponent();
+            this.webView.Source = RadioUri;
+        }
+
+        private void refreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.webView.Refresh();
         }
     }
 }
