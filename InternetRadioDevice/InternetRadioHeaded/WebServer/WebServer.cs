@@ -180,7 +180,8 @@ namespace InternetRadio
                             switch (parameters[settingParam])
                             {
                                 case "On":
-                                    this.playbackManager.Play(new Uri(this.playlistManager.CurrentTrack.Address));
+                                    if (!waitForPlaying)
+                                        this.playbackManager.Play(new Uri(this.playlistManager.CurrentTrack.Address));
                                     waitForPlaying = true;
                                     break;
                                 case "Off":
@@ -196,7 +197,7 @@ namespace InternetRadio
                             if (double.TryParse(parameters[settingParam], out newVolume))
                             {
                                 newVolume = Math.Round(newVolume / 100, 2);
-                                if (newVolume >= 0 && newVolume <= 1)
+                                if (newVolume >= 0 && newVolume <= 1 && newVolume != this.playbackManager.Volume)
                                 {
                                     this.playbackManager.Volume = newVolume;
                                 }
@@ -205,26 +206,31 @@ namespace InternetRadio
                         settingParam = "trackAction";
                         if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
                         {
-                            waitForPlaying = true;
                             waitForTrackChange = true;
-                            this.playbackManager.Pause();
                             switch (parameters[settingParam])
                             {
                                 case "prev":
+                                    this.playbackManager.Pause();
                                     this.playlistManager.PreviousTrack();
                                     break;
                                 case "next":
+                                    this.playbackManager.Pause();
                                     this.playlistManager.NextTrack();
                                     break;
                                 case "track":
                                     if (parameters.ContainsKey("trackName") && !string.IsNullOrWhiteSpace(parameters["trackName"]))
                                     {
-                                        waitForTrackChange = false;
-                                        trackName = parameters["trackName"];
-                                        this.playlistManager.PlayTrack(trackName);
+                                        if (trackName != parameters["trackName"])
+                                        { 
+                                            this.playbackManager.Pause();
+                                            this.playlistManager.PlayTrack(parameters["trackName"]);
+                                        }
+                                        else
+                                            waitForTrackChange = false;
                                     }
                                     break;
                             }
+                            if (waitForTrackChange) { waitForPlaying = true; }
                         }
 
                         DateTime timeOut = DateTime.Now.AddSeconds(30);
