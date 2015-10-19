@@ -234,13 +234,12 @@ namespace InternetRadio
                         }
 
                         DateTime timeOut = DateTime.Now.AddSeconds(30);
+                        Debug.WriteLine("Waiting on State: playback={0}; trackname={1}", this.playbackManager.PlaybackState, trackName);
                         while (DateTime.Now.CompareTo(timeOut) < 0 && (
                             (this.playbackManager.PlaybackState == PlaybackState.Playing) != waitForPlaying
                             || (this.playlistManager.CurrentTrack.Name != trackName) != waitForTrackChange
-                            ))
-                        {
-                            Debug.WriteLine("Waiting on State: playback={0}; trackname={1}", this.playbackManager.PlaybackState, trackName);
-                        }
+                            ));
+                        
                         if (DateTime.Now.CompareTo(timeOut) >= 0)
                         {
                             Debug.WriteLine("track did not start playing in time limit");
