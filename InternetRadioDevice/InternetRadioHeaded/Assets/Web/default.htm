@@ -14,7 +14,14 @@
 			var currentStation = '#currentTrack#';
 			function PopulateStationList () {
 				$(JSON.parse(stationListJSON)).each(function() {  
-         		$("#stationList").append( "<div class='row" + ((this.name == currentStation)?" selected":"") + "'><a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a></div>");								
+         		$("#stationList").append( "<div class='row" + ((this.name == currentStation)?" selected":"") + "'>" +
+	         			"<div class='station' style='float:left'>" +
+		         			"<a href='settings.htm?trackAction=track&trackName=" + this.name + "' title='" + this.url + "'>" + this.name + "</a>" +
+	 							"</div>" +
+	         			"<div class='stationUpdate radioButton enabled'>" +
+		         			"<a href='addstation.htm?trackName=" + this.name + "' title='UpdateTrack'></a>" +
+	 							"</div>" +
+         			"</div>");								
 				});
 			}
 			
