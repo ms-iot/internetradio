@@ -221,7 +221,7 @@ namespace InternetRadio
                                     if (parameters.ContainsKey("trackName") && !string.IsNullOrWhiteSpace(parameters["trackName"]))
                                     {
                                         if (trackName != parameters["trackName"])
-                                        { 
+                                        {
                                             this.playbackManager.Pause();
                                             this.playlistManager.PlayTrack(parameters["trackName"]);
                                         }
@@ -239,7 +239,7 @@ namespace InternetRadio
                             (this.playbackManager.PlaybackState == PlaybackState.Playing) != waitForPlaying
                             || (this.playlistManager.CurrentTrack.Name != trackName) != waitForTrackChange
                             ));
-                        
+
                         if (DateTime.Now.CompareTo(timeOut) >= 0)
                         {
                             Debug.WriteLine("track did not start playing in time limit");
@@ -251,20 +251,67 @@ namespace InternetRadio
                 else if (request.Contains(NavConstants.ADDSTATION_PAGE))
                 {
                     string html = await GeneratePageHtml(NavConstants.ADDSTATION_PAGE);
+                    string trackName = "";
+                    string trackUrl = "";
+                    if (!string.IsNullOrEmpty(request))
+                    {
+                        string settingParam = "trackName";
+                        IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
+                        if (parameters.ContainsKey(settingParam) && !string.IsNullOrWhiteSpace(parameters[settingParam]))
+                        {
+                            Track trackToUpdate = playlistManager.CurrentPlaylist.Tracks.First(t => t.Name == parameters[settingParam]);
+                            if (null != trackToUpdate)
+                            {
+                                trackName = trackToUpdate.Name;
+                                trackUrl = trackToUpdate.Address;
+                            }
+                        }
+                    }
+                    html = html.Replace("var stationName = '';", string.Format("var stationName = '{0}';", trackName));
+                    html = html.Replace("var stationUrl = '';", string.Format("var stationUrl = '{0}';", trackUrl));
                     await WebHelper.WriteToStream(html, os);
                 }
                 else if (request.Contains(NavConstants.ADDSTATIONSET_PAGE))
                 {
                     if (!string.IsNullOrEmpty(request))
                     {
+                        Track origTrack = null;
+                        Track newTrack = null;
+                        string trackAction = "";
                         IDictionary<string, string> parameters = WebHelper.ParseGetParametersFromUrl(new Uri(string.Format("http://0.0.0.0/{0}", request)));
-
                         if (parameters.ContainsKey("name") && !string.IsNullOrWhiteSpace(parameters["name"]))
                         {
                             if (parameters.ContainsKey("url") && !string.IsNullOrWhiteSpace(parameters["url"]))
                             {
-                                Track newTrack = new Track() { Name = parameters["name"], Address = parameters["url"] };
-                                this.playlistManager.CurrentPlaylist.Tracks.Add(newTrack);
+                                newTrack = new Track() { Name = parameters["name"], Address = parameters["url"] };
+                            }
+                        }
+                        if (parameters.ContainsKey("nameOrig") && !string.IsNullOrWhiteSpace(parameters["nameOrig"]))
+                        {
+                            origTrack = this.playlistManager.CurrentPlaylist.Tracks.First(t => t.Name == parameters["nameOrig"]);
+                        }
+                        if (parameters.ContainsKey("trackAction") && !string.IsNullOrWhiteSpace(parameters["trackAction"]))
+                        {
+                            trackAction = parameters["trackAction"];
+                        }
+
+                        if (null != newTrack)
+                        {
+                            switch (trackAction)
+                            {
+                                case "Update":
+                                    if (null != origTrack)
+                                        this.playlistManager.CurrentPlaylist.Tracks.Remove(origTrack);
+                                        this.playlistManager.CurrentPlaylist.Tracks.Add(newTrack);
+                                    break;
+                                case "Remove":
+                                    if (null != origTrack)
+                                        this.playlistManager.CurrentPlaylist.Tracks.Remove(origTrack);
+                                    break;
+                                case "":
+                                case "Add":
+                                    this.playlistManager.CurrentPlaylist.Tracks.Add(newTrack);
+                                    break;
                             }
                         }
                     }

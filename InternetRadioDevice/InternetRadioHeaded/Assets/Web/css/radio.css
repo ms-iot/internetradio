@@ -1,3 +1,10 @@
+    	.stationUpdate {
+    		float:right;
+    		background:url('../img/edit.png');    		
+    	}
+    	.stationUpdate a {
+    		content:url('../img/edit.png');    		
+    	}
     	.radioOn {
     		background:url('../img/radioOn.png');    		
     	}
