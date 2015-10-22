@@ -68,7 +68,16 @@ namespace InternetRadio
             var previousPlaylist = this.loadPlaylistId();
             if (previousPlaylist.HasValue)
             {
-                await this.radioPresetManager.LoadPlayList(previousPlaylist.Value);
+                var success = await this.radioPresetManager.LoadPlayList(previousPlaylist.Value);
+                // If success is false then the playlist failed to load
+                // So we will fallback into a recovery state and act like
+                // first boot
+                if (!success)
+                {
+                    StartupTask.WriteTelemetryEvent("Error_CorruptDefaultPlaylist");
+                    this.savePlaylistId(null);
+                }
+
                 telemetryInitializeProperties.Add("FirstBoot", false.ToString());
             }
             else
@@ -218,7 +227,7 @@ namespace InternetRadio
             return volume;
         }
 
-        private void savePlaylistId(Guid id)
+        private void savePlaylistId(Guid? id)
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["playlist"] = id;

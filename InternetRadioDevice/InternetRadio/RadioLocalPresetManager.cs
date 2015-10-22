@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Windows.Storage;
@@ -52,7 +53,7 @@ namespace InternetRadio
         public event PlaylistChangedEventHandler PlaylistChanged;
         public event PlaylistCurrentTrackChangedEventHandler CurrentTrackChanged;
 
-        public async Task LoadPlayList(Guid playlistId)
+        public async Task<bool> LoadPlayList(Guid playlistId)
         {
             await saveCurrentPlaylistToFile();
 
@@ -61,10 +62,13 @@ namespace InternetRadio
             {
                 this.CurrentPlaylist = playlist;
                 this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
+                return true;
             }
             else
             {
                 Debug.WriteLine("RadioLocalPresetManager: Playlist "+ playlistId.ToString() + " was not avaliable");
+                this.CurrentPlaylist = null;
+                return false;
             }
         }
 
@@ -86,6 +90,7 @@ namespace InternetRadio
             newPlaylist.Tracks = new ObservableCollection<Track>(tracks);
 
             this.CurrentPlaylist = newPlaylist;
+            this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
             await this.saveCurrentPlaylistToFile();
 
             return newPlaylist.Id;
@@ -168,6 +173,11 @@ namespace InternetRadio
             catch(FileNotFoundException)
             {
                 Debug.WriteLine("RadioLocalPresetManager: Playlist file not found - " + fileName);
+            }
+            catch(XmlException)
+            {
+                Debug.WriteLine("RadioLocalPresetManager: Playlist file was corrupt, deleting - " + fileName);
+                File.Delete(fileName);
             }
 
             return playlist;
