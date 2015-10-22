@@ -45,22 +45,26 @@ namespace InternetRadio
             foreach (var pinSetting in Config.Buttons_Pins)
             {
                 GpioPin button;
-                GpioOpenStatus status;
-
-                if (gpio.TryOpenPin(pinSetting.Key, GpioSharingMode.Exclusive, out button, out status))
+                GpioOpenStatus status = GpioOpenStatus.PinUnavailable;
+                try
                 {
-                    if (status == GpioOpenStatus.PinOpened)
+                    if (gpio.TryOpenPin(pinSetting.Key, GpioSharingMode.Exclusive, out button, out status))
                     {
-                        button.DebounceTimeout = new TimeSpan(Config.Buttons_Debounce);
-                        button.SetDriveMode(GpioPinDriveMode.Input);
-                        button.ValueChanged += handleButton;
-                        Debug.WriteLine("Button on pin " + pinSetting.Value + " successfully bound for action: " + pinSetting.Key.ToString());
-                        actionButtons.Add(pinSetting.Value, button);
-                        button = null;
-                        continue;
+                        if (status == GpioOpenStatus.PinOpened)
+                        {
+                            button.DebounceTimeout = new TimeSpan(Config.Buttons_Debounce);
+                            button.SetDriveMode(GpioPinDriveMode.Input);
+                            button.ValueChanged += handleButton;
+                            Debug.WriteLine("Button on pin " + pinSetting.Value + " successfully bound for action: " + pinSetting.Key.ToString());
+                            actionButtons.Add(pinSetting.Value, button);
+                            button = null;
+                            continue;
+                        }
                     }
                 }
-
+                catch (System.ArgumentException)
+                { //tryopen should never have failed when pin is out of range
+                }
                 Debug.WriteLine("Error: Button on pin " + pinSetting.Value + " was unable to be bound because: " + status.ToString());
             }
 
@@ -69,11 +73,11 @@ namespace InternetRadio
 
         private void handleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
-            Debug.WriteLine("Value Change on pin:" + sender.PinNumber +" : " + args.Edge);
+            Debug.WriteLine("Value Change on pin:" + sender.PinNumber + " : " + args.Edge);
             StartupTask.WriteTelemetryEvent("Action_PhysicalButton");
             if (args.Edge == GpioPinEdge.RisingEdge)
             {
-                switch(Config.Buttons_Pins[sender.PinNumber])
+                switch (Config.Buttons_Pins[sender.PinNumber])
                 {
                     case InputAction.NextChannel:
                         this.playlistManager.NextTrack();
