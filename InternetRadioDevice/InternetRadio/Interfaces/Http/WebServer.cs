@@ -23,7 +23,7 @@ namespace InternetRadio
     /// <summary>
     /// HttpServer class that services the content for the Security System web interface
     /// </summary>
-    public sealed class HttpServer : IDisposable
+    internal class HttpInterfaceManager : IDisposable
     {
         private const uint BufferSize = 8192;
         private int port = 8000;
@@ -37,7 +37,7 @@ namespace InternetRadio
         /// Constructor
         /// </summary>
         /// <param name="serverPort">Port to start server on</param>
-        internal HttpServer(int serverPort, IPlaybackManager playbackManager, IPlaylistManager playlistManager, IDevicePowerManager powerManager)
+        internal HttpInterfaceManager(int serverPort, IPlaybackManager playbackManager, IPlaylistManager playlistManager, IDevicePowerManager powerManager)
         {
             this.playbackManager = playbackManager;
             this.playlistManager = playlistManager;
@@ -358,7 +358,7 @@ namespace InternetRadio
 
                             // Log telemetry event about this exception
                             var events = new Dictionary<string, string> { { "WebServer", ex.Message } };
-                            StartupTask.WriteTelemetryEvent("FailedToOpenStream", events);
+                            TelemetryManager.WriteTelemetryEvent("FailedToOpenStream", events);
                         }
 
                         // Send 404 not found if can't find file
@@ -382,7 +382,7 @@ namespace InternetRadio
 
                 // Log telemetry event about this exception
                 var events = new Dictionary<string, string> { { "WebServer", ex.Message } };
-                StartupTask.WriteTelemetryEvent("FailedToWriteResponse", events);
+                TelemetryManager.WriteTelemetryEvent("FailedToWriteResponse", events);
 
                 try
                 {
@@ -392,7 +392,7 @@ namespace InternetRadio
                 }
                 catch (Exception e)
                 {
-                    StartupTask.WriteTelemetryException(e);
+                    TelemetryManager.WriteTelemetryException(e);
                 }
             }
         }

@@ -6,20 +6,10 @@ using Windows.Devices.Gpio;
 
 namespace InternetRadio
 {
-    public enum InputAction
-    {
-        NextChannel,
-        PreviousChannel,
-        VolumeUp,
-        VolumeDown,
-        Sleep,
-        AddChannel,
-        DeleteChannel
-    }
-
     class GpioInterfaceManager
     {
         private Dictionary<InputAction, GpioPin> actionButtons;
+        private IDictionary<int, InputAction> buttonPins;
         private IPlaybackManager playbackManager;
         private IPlaylistManager playlistManager;
         private IDevicePowerManager powerManager;
@@ -31,9 +21,10 @@ namespace InternetRadio
             this.powerManager = powerManager;
         }
 
-        public bool Initialize()
+        public bool Initialize(int buttonDebounce, IDictionary<int, InputAction> buttonPins)
         {
-            actionButtons = new Dictionary<InputAction, GpioPin>();
+            this.actionButtons = new Dictionary<InputAction, GpioPin>();
+            this.buttonPins = buttonPins;
             var gpio = GpioController.GetDefault();
 
             if (null == gpio)
@@ -42,7 +33,7 @@ namespace InternetRadio
                 return false;
             }
 
-            foreach (var pinSetting in Config.Buttons_Pins)
+            foreach (var pinSetting in buttonPins)
             {
                 GpioPin button;
                 GpioOpenStatus status = GpioOpenStatus.PinUnavailable;
@@ -52,7 +43,7 @@ namespace InternetRadio
                     {
                         if (status == GpioOpenStatus.PinOpened)
                         {
-                            button.DebounceTimeout = new TimeSpan(Config.Buttons_Debounce);
+                            button.DebounceTimeout = new TimeSpan(buttonDebounce);
                             button.SetDriveMode(GpioPinDriveMode.Input);
                             button.ValueChanged += handleButton;
                             Debug.WriteLine("Button on pin " + pinSetting.Value + " successfully bound for action: " + pinSetting.Key.ToString());
@@ -74,10 +65,10 @@ namespace InternetRadio
         private void handleButton(GpioPin sender, GpioPinValueChangedEventArgs args)
         {
             Debug.WriteLine("Value Change on pin:" + sender.PinNumber + " : " + args.Edge);
-            StartupTask.WriteTelemetryEvent("Action_PhysicalButton");
+            TelemetryManager.WriteTelemetryEvent("Action_PhysicalButton");
             if (args.Edge == GpioPinEdge.RisingEdge)
             {
-                switch (Config.Buttons_Pins[sender.PinNumber])
+                switch (this.buttonPins[sender.PinNumber])
                 {
                     case InputAction.NextChannel:
                         this.playlistManager.NextTrack();

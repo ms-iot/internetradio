@@ -82,11 +82,12 @@ namespace InternetRadio
         public async Task<Guid> StartNewPlaylist(string name, List<Track> tracks, bool persist)
         {
             await this.saveCurrentPlaylistToFile();
-            var newPlaylist = new Playlist(name, Guid.NewGuid());
+            var playlistId = Guid.NewGuid();
+            var newPlaylist = new Playlist(name, playlistId);
             newPlaylist.Tracks = new ObservableCollection<Track>(tracks);
 
             this.CurrentPlaylist = newPlaylist;
-            await this.saveCurrentPlaylistToFile();
+            this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
 
             return newPlaylist.Id;
         }
@@ -168,6 +169,10 @@ namespace InternetRadio
             catch(FileNotFoundException)
             {
                 Debug.WriteLine("RadioLocalPresetManager: Playlist file not found - " + fileName);
+            }
+            catch (System.Xml.XmlException)
+            {
+                Debug.WriteLine("RadioLocalPresetManager: Playlist file not in correct format - " + fileName);
             }
 
             return playlist;

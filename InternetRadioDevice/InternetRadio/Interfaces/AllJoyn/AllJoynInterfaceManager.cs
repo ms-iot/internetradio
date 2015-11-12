@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
-using com.microsoft.maker.InternetRadio;
 using Windows.Devices.AllJoyn;
 using Windows.Foundation;
-using System.ComponentModel;
 using Windows.ApplicationModel;
 using System.Xml.Linq;
+using com.microsoft.maker.InternetRadio;
 
 namespace InternetRadio
 {
@@ -63,7 +59,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 return InternetRadioGetCurrentlyPlayingResult.CreateSuccessResult(
                     (null != this.playlistManager.CurrentTrack) ? this.playlistManager.CurrentTrack.Name : string.Empty);
             }).AsAsyncOperation();
@@ -78,7 +74,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 return InternetRadioGetVolumeResult.CreateSuccessResult(this.playbackManager.Volume);
             }).AsAsyncOperation();
         }
@@ -87,7 +83,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 this.playbackManager.Volume = value;
                 return InternetRadioSetVolumeResult.CreateSuccessResult();
             }).AsAsyncOperation();
@@ -97,7 +93,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
            {
-               StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+               TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                this.playlistManager.NextTrack();
                return new InternetRadioNextPresetResult();
            }).AsAsyncOperation();
@@ -107,7 +103,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 this.playlistManager.PreviousTrack();
                 return new InternetRadioPreviousPresetResult();
             }).AsAsyncOperation();
@@ -117,7 +113,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 return InternetRadioGetVersionResult.CreateSuccessResult(Package.Current.Id.Version.Major);
             }).AsAsyncOperation();
         }
@@ -126,7 +122,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 var newPreset = new Track();
                 newPreset.Name = interfaceMemberPresetName;
                 newPreset.Address = interfaceMemberPresetAddress;
@@ -139,7 +135,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 var trackPresetToDelete = this.playlistManager.CurrentPlaylist.Tracks.FirstOrDefault(t => t.Name == interfaceMemberPresetName);
                 if (null != trackPresetToDelete)
                 {
@@ -154,7 +150,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 if (this.playlistManager.PlayTrack(interfaceMemberPresetName))
                 {
                     return InternetRadioPlayPresetResult.CreateSuccessResult();
@@ -170,7 +166,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 var presets = new XElement("Presets");
 
                 foreach (var preset in this.playlistManager.CurrentPlaylist.Tracks)
@@ -186,7 +182,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 return InternetRadioGetPowerResult.CreateSuccessResult(PowerState.Powered == this.powerManager.PowerState);
             }).AsAsyncOperation();
         }
@@ -195,7 +191,7 @@ namespace InternetRadio
         {
             return Task.Run(() =>
             {
-                StartupTask.WriteTelemetryEvent("Action_AllJoyn");
+                TelemetryManager.WriteTelemetryEvent("Action_AllJoyn");
                 this.powerManager.PowerState = (false) ?  PowerState.Standby : PowerState.Powered;
 
                 return InternetRadioSetPowerResult.CreateSuccessResult();
