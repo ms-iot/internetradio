@@ -233,7 +233,7 @@ namespace InternetRadio
             return volume;
         }
 
-        private void savePlaylistId(Guid id)
+        private void savePlaylistId(Guid? id)
         {
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             localSettings.Values["playlist"] = id;

@@ -23,7 +23,13 @@ namespace InternetRadio
     {
         event PlaylistChangedEventHandler PlaylistChanged;
         event PlaylistCurrentTrackChangedEventHandler CurrentTrackChanged;
-        Task LoadPlayList(Guid playlistId);
+
+        /// <summary>
+        /// Load the playlist with the given ID
+        /// </summary>
+        /// <param name="playlistId">The ID of the playlist</param>
+        /// <returns>Whether the playlist was successfully loaded</returns>
+        Task<bool> LoadPlayList(Guid playlistId);
 
         /// <summary>
         /// 
@@ -52,7 +58,16 @@ namespace InternetRadio
         /// <returns>False if the track was not on the playlist, true if it was</returns>
         bool PlayTrack(string trackName);
 
+        /// <summary>
+        /// Moves the CurrentTrack forward one item
+        /// </summary>
+        /// <returns>The new CurrentTrack</returns>
         Track NextTrack();
+
+        /// <summary>
+        /// Moves the CurrentTrack back one item
+        /// </summary>
+        /// <returns>The new CurrentTrack</returns>
         Track PreviousTrack();
     }
 }
