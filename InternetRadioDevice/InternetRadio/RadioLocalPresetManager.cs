@@ -86,11 +86,13 @@ namespace InternetRadio
         public async Task<Guid> StartNewPlaylist(string name, List<Track> tracks, bool persist)
         {
             await this.saveCurrentPlaylistToFile();
-            var newPlaylist = new Playlist(name, Guid.NewGuid());
+            var playlistId = Guid.NewGuid();
+            var newPlaylist = new Playlist(name, playlistId);
             newPlaylist.Tracks = new ObservableCollection<Track>(tracks);
 
             this.CurrentPlaylist = newPlaylist;
             this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
+
             await this.saveCurrentPlaylistToFile();
 
             return newPlaylist.Id;
