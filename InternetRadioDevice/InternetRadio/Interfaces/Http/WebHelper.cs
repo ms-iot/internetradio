@@ -153,52 +153,6 @@ namespace InternetRadio
             return parameters;
         }
 
-        ///// <summary>
-        ///// Parses the GET parameters from the URL and loads them into the settings
-        ///// </summary>
-        ///// <param name="uri"></param>
-        //public void ParseUriIntoSettings(Uri uri)
-        //{
-        //    var decoder = new WwwFormUrlDecoder(uri.Query);
-
-        //    // Take the parameters from the URL and put it into Settings
-        //    foreach (WwwFormUrlDecoderEntry entry in decoder)
-        //    {
-        //        try
-        //        {
-        //            var field = typeof(AppSettings).GetField(entry.Name);
-        //            if (field.FieldType == typeof(int))
-        //            {
-        //                field.SetValue(App.Controller.XmlSettings, Convert.ToInt32(entry.Value));
-        //            }
-        //            else if (field.FieldType == typeof(CameraType) ||
-        //                    field.FieldType == typeof(StorageProvider))
-        //            {
-        //                field.SetValue(App.Controller.XmlSettings, Enum.Parse(field.FieldType, entry.Value));
-        //            }
-        //            else
-        //            {
-        //                //if the field being saved is the alias, and the alias has changed, send a telemetry event
-        //                if (0 == field.Name.CompareTo("MicrosoftAlias") &&
-        //                   0 != entry.Value.CompareTo(App.Controller.XmlSettings.MicrosoftAlias))
-        //                {
-        //                    Dictionary<string, string> properties = new Dictionary<string, string> { { "Alias", entry.Value } };
-        //                    App.Controller.TelemetryClient.TrackEvent("Alias Changed", properties);
-        //                }
-        //                field.SetValue(App.Controller.XmlSettings, entry.Value);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine(ex.Message);
-
-        //            // Log telemetry event about this exception
-        //            var events = new Dictionary<string, string> { { "WebHelper", ex.Message } };
-        //            StartupTask.WriteTelemetryEvent("FailedToParseUriIntoSettings", events);
-        //        }
-        //    }
-        //}
-
         /// <summary>
         /// Writes html data to the stream
         /// </summary>

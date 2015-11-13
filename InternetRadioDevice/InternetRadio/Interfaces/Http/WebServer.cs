@@ -126,13 +126,6 @@ namespace InternetRadio
             catch (Exception ex)
             {
                 Debug.WriteLine("Exception in processRequestAsync(): " + ex.Message);
-
-                //This exception is thrown when someone clicks on a link while the current page is still loading. This isn't really an exception worth tracking as it will be thrown a lot, but doesn't affect anything.
-                /*
-                // Log telemetry event about this exception
-                var events = new Dictionary<string, string> { { "WebServer", ex.Message } };
-                App.Controller.TelemetryClient.TrackEvent("FailedToProcessRequestAsync", events);
-                */
             }
         }
 
