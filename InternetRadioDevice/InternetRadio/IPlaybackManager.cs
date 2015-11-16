@@ -31,7 +31,7 @@ namespace InternetRadio
     delegate void VolumeChangedEventHandler(object sender, VolumeChangedEventArgs e);
     delegate void PlaybackStatusChangedEventHandler(object sender, PlaybackStateChangedEventArgs e);
 
-    interface IPlaybackManager
+    internal interface IPlaybackManager
     {
         event VolumeChangedEventHandler VolumeChanged;
         event PlaybackStatusChangedEventHandler PlaybackStateChanged;
