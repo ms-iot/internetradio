@@ -17,7 +17,7 @@ namespace InternetRadio
         
         private BackgroundTaskDeferral deferral;
 
-        private RadioManager radioMaager;
+        private RadioManager radioManager;
 
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace InternetRadio
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
-            await this.radioMaager.Dispose();
+            await this.radioManager.Dispose();
         }
     }
 }
