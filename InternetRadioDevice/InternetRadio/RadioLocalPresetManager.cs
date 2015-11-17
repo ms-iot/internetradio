@@ -92,7 +92,6 @@ namespace InternetRadio
 
             this.CurrentPlaylist = newPlaylist;
             this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
-
             await this.saveCurrentPlaylistToFile();
 
             return newPlaylist.Id;
