@@ -74,10 +74,12 @@ namespace InternetRadio
 
         private async void Tracks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if ((e.OldStartingIndex == this.currentPreset))
+            if ((e.OldStartingIndex == -1 && e.NewStartingIndex == 0) ||
+                (e.OldStartingIndex == 0 && e.NewStartingIndex == -1))
             {
                 this.CurrentTrackChanged(this, new PlaylistCurrentTrackChangedEventArgs() { CurrentTrack = this.CurrentTrack });
             }
+
             await this.saveCurrentPlaylistToFile();
         }
 
@@ -90,7 +92,6 @@ namespace InternetRadio
 
             this.CurrentPlaylist = newPlaylist;
             this.CurrentPlaylist.Tracks.CollectionChanged += Tracks_CollectionChanged;
-
             await this.saveCurrentPlaylistToFile();
 
             return newPlaylist.Id;
