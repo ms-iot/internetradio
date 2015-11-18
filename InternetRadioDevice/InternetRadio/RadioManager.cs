@@ -9,7 +9,7 @@ using Windows.Foundation;
 
 namespace InternetRadio
 {
-    public sealed class RadioManager 
+    public sealed class RadioManager
     {
         private IPlaylistManager radioPresetManager;
         private IPlaybackManager radioPlaybackManager;
@@ -83,7 +83,6 @@ namespace InternetRadio
                 else
                 {
                     telemetryInitializeProperties.Add("FirstBoot", true.ToString());
-                    this.radioPlaybackManager.Volume = .25;
                 }
 
                 if (this.radioPresetManager.CurrentPlaylist == null)
@@ -120,13 +119,13 @@ namespace InternetRadio
 
         private async void RadioPowerManager_PowerStateChanged(object sender, PowerStateChangedEventArgs e)
         {
-            switch(e.PowerState)
+            switch (e.PowerState)
             {
                 case PowerState.Powered:
 
-                    await this.tryWriteToDisplay(this.resourceLoader.GetString("StartupMessageLine1") + 
-                                                        "\n" + 
-                                                        this.resourceLoader.GetString("StartupMessageLine2"), 
+                    await this.tryWriteToDisplay(this.resourceLoader.GetString("StartupMessageLine1") +
+                                                        "\n" +
+                                                        this.resourceLoader.GetString("StartupMessageLine2"),
                                                         0);
 
                     await Task.Delay(this.config.Messages_StartupMessageDelay);
@@ -147,7 +146,7 @@ namespace InternetRadio
         private async void RadioPlaybackManager_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
         {
             Debug.WriteLine(string.Format("playbackstate changed: {0}", e.State.ToString()));
-            switch(e.State)
+            switch (e.State)
             {
                 case PlaybackState.Error_MediaInvalid:
                     await this.tryWriteToDisplay(this.resourceLoader.GetString("MediaErrorMessage") + "\n" + this.radioPresetManager.CurrentTrack.Name, 0);
@@ -178,6 +177,7 @@ namespace InternetRadio
         private async void RadioPlaybackManager_VolumeChanged(object sender, VolumeChangedEventArgs e)
         {
             await this.tryWriteToDisplay(this.resourceLoader.GetString("VolumeMesage") + "\n" + ((int)(e.Volume * 100)).ToString() + "%", 3);
+            this.saveVolume(e.Volume);
         }
 
         private void RadioPresetManager_CurrentTrackChanged(object sender, PlaylistCurrentTrackChangedEventArgs e)
@@ -200,6 +200,11 @@ namespace InternetRadio
 
         private void playChannel(Track track)
         {
+            if (null == track)
+            {
+                Debug.WriteLine("RadioManager: Play Track failed due to null track");
+                return;
+            }
             Debug.WriteLine("RadioManager: Play Track - " + track.Name);
             this.radioPlaybackManager.Play(new Uri(track.Address));
         }
@@ -228,6 +233,10 @@ namespace InternetRadio
             if (localSettings.Values.ContainsKey("volume"))
             {
                 volume = Convert.ToDouble(localSettings.Values["volume"]);
+            }
+            else
+            {
+                volume = .25;
             }
 
             return volume;
