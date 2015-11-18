@@ -50,8 +50,8 @@
 				});
 
 				$("#volumeButton").click(function() { 
-					onStateVal.value="On";
-					volumeSlide.value=100;
+					$("#onStateVal").val("On");
+					$("#volumeSlide").val(100);
 					radioForm.submit();
 				}); 
 				$("#muteButton").click(function() { 

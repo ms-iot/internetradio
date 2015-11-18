@@ -227,7 +227,7 @@ namespace InternetRadio
                         }
 
                         DateTime timeOut = DateTime.Now.AddSeconds(30);
-                        Debug.WriteLine("Waiting on State: playback={0}; trackname={1}", this.playbackManager.PlaybackState, trackName);
+                        Debug.WriteLine("Waiting on State: playback={0}; trackname={1}", (waitForPlaying)?"Playing":"NotPlaying", trackName);
                         while (DateTime.Now.CompareTo(timeOut) < 0 && (
                             (this.playbackManager.PlaybackState == PlaybackState.Playing) != waitForPlaying
                             || (this.playlistManager.CurrentTrack.Name != trackName) != waitForTrackChange
@@ -294,8 +294,13 @@ namespace InternetRadio
                             {
                                 case "Update":
                                     if (null != origTrack)
-                                        this.playlistManager.CurrentPlaylist.Tracks.Remove(origTrack);
+                                    {
+                                        this.playlistManager.CurrentPlaylist.Tracks[this.playlistManager.CurrentPlaylist.Tracks.IndexOf(origTrack)] = newTrack;
+                                    }
+                                    else
+                                    { 
                                         this.playlistManager.CurrentPlaylist.Tracks.Add(newTrack);
+                                    }
                                     break;
                                 case "Remove":
                                     if (null != origTrack)

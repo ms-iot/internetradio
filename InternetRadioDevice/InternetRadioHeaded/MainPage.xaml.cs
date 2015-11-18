@@ -33,7 +33,7 @@ namespace InternetRadio
 
         private void refreshButton_Click(object sender, RoutedEventArgs e)
         {
-            this.webView.Refresh();
+            this.webView.Source = RadioUri;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
