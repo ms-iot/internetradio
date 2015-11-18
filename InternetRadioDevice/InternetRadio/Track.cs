@@ -8,12 +8,20 @@ using System.Xml.Linq;
 
 namespace InternetRadio
 {
-    internal class Track
+    public sealed class Track
     {
-        public string Name;
-        public string Address;
+        public string Name
+        {
+            get; set;
+        }
 
-        public XElement Serialize()
+        public string Address
+        {
+            get;
+            set;
+        }
+
+        internal XElement Serialize()
         {
             var xml = new XElement("Track");
 
@@ -23,7 +31,7 @@ namespace InternetRadio
             return xml;
         }
 
-        public static Track Deserialize(XElement xml)
+        internal static Track Deserialize(XElement xml)
         {
             Track track = null;
 

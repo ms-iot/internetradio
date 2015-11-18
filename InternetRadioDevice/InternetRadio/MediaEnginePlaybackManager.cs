@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.Maker.Media.UniversalMediaEngine;
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using UniversalMediaEngine;
 
 namespace InternetRadio
 {
@@ -49,8 +46,11 @@ namespace InternetRadio
             }
             internal set
             {
-                this.state = value;
-                this.PlaybackStateChanged(this, new PlaybackStateChangedEventArgs() { State = this.state });
+                if (this.state != value)
+                {
+                    this.state = value;
+                    this.PlaybackStateChanged(this, new PlaybackStateChangedEventArgs() { State = this.state });
+                }
             }
         }
 
@@ -60,6 +60,11 @@ namespace InternetRadio
             {
                 case MediaState.Loading:
                     this.PlaybackState = PlaybackState.Loading;
+
+                    break;
+
+                case MediaState.Stopped:
+                    this.PlaybackState = PlaybackState.Paused;
 
                     break;
 
@@ -83,8 +88,8 @@ namespace InternetRadio
             var result = await this.mediaEngine.InitializeAsync();
             if (result == MediaEngineInitializationResult.Fail)
             {
-                StartupTask.WriteTelemetryEvent("MediaEngine_FailedToInitialize");
-                
+                TelemetryManager.WriteTelemetryEvent("MediaEngine_FailedToInitialize");
+
             }
 
             this.mediaEngine.MediaStateChanged += MediaEngine_MediaStateChanged;
@@ -99,6 +104,7 @@ namespace InternetRadio
         public void Pause()
         {
             this.mediaEngine.Pause();
+            this.PlaybackState = PlaybackState.Paused;
         }
 
         public void Stop()
